@@ -5,4 +5,5 @@ Tech stack
 * CSS
 * JS
 
-## MIT LICENSE
+## License
+MIT [LICENSE](LICENSE)
