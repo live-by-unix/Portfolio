@@ -1,286 +1,391 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#0a0a0b">
-    <meta name="description" content="Explore open-source projects, developer tools, APIs, games, and experiments by live-by-unix.">
-    <meta property="og:title" content="live-by-unix — Developer & Open Source">
-    <meta property="og:description" content="Explore projects, developer tools, APIs, games, and open-source experiments.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://live-by-unix.github.io/">
-    <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="live-by-unix — Developer">
-    <meta name="twitter:description" content="Open-source software, developer tools, and experiments.">
-    <link rel="canonical" href="https://live-by-unix.github.io/">
-    <link rel="icon" href="https://github.com/live-by-unix.png" type="image/png">
-    <link rel="stylesheet" href="styles.css">
-    <title>live-by-unix — Developer</title>
-    <script>
-        try {
-            const theme = localStorage.getItem("portfolio-theme");
-            if (theme === "light" || theme === "dark") {
-                document.documentElement.dataset.theme = theme;
-            } else if (matchMedia("(prefers-color-scheme: light)").matches) {
-                document.documentElement.dataset.theme = "light";
-            }
-        } catch {}
-    </script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#070d1b">
+<meta name="description" content="The developer portfolio of live-by-unix — projects, open-source work, and developer tools.">
+<title>live-by-unix — Developer Portfolio</title>
+<style>
+:root{color-scheme:dark;--bg:#070d1b;--bg2:#0a1427;--panel:#0b172b;--panel2:#0d1b33;--text:#edf3ff;--muted:#9aaccb;--dim:#6f83a8;--line:#1b3153;--accent:#8b5cf6;--accent2:#38bdf8;--green:#34d399;--shadow:0 16px 45px #0003;--radius:17px}
+html[data-theme=light]{color-scheme:light;--bg:#f3f6fc;--bg2:#eaf0fa;--panel:#fff;--panel2:#f7f9ff;--text:#15213b;--muted:#50617d;--dim:#71819b;--line:#d7e1f1;--accent:#6d35e8;--accent2:#087fbe;--green:#07865e;--shadow:0 14px 35px #253b5d12}
+*{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:90px}body{margin:0;background:radial-gradient(ellipse at 15% 0%,#17255435,transparent 36%),var(--bg);color:var(--text);font:15px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}a{color:inherit;text-decoration:none}button,input,select{font:inherit}button,a,input,select{outline-offset:3px}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent2)}button{cursor:pointer}img{max-width:100%}.wrap{width:min(1160px,calc(100% - 40px));margin-inline:auto}.muted{color:var(--muted)}.eyebrow{color:var(--accent2);font-size:.76rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+header{position:sticky;top:0;z-index:10;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(18px)}.nav{min-height:68px;display:flex;align-items:center;gap:24px;justify-content:space-between}.brand{display:flex;align-items:center;gap:11px;font-weight:850;letter-spacing:-.03em;font-size:1.12rem;white-space:nowrap}.brand-icon{display:grid;place-items:center;width:35px;height:35px;border-radius:10px;background:linear-gradient(135deg,#a855f7,#4f46e5);color:#fff;font-weight:900;box-shadow:0 5px 20px #7c3aed35}.navlinks{display:flex;align-items:center;gap:27px}.navlinks a{font-size:.88rem;color:var(--muted);padding:22px 0;border-bottom:2px solid transparent}.navlinks a:hover,.navlinks a.active{color:var(--text);border-color:var(--accent)}.nav-actions{display:flex;align-items:center;gap:10px}.icon-btn,.menu-btn{height:39px;min-width:39px;display:grid;place-items:center;border:1px solid var(--line);border-radius:11px;background:var(--panel);color:var(--text)}.github-btn,.primary-btn,.secondary-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;border-radius:11px;padding:10px 15px;font-weight:700;font-size:.86rem;border:1px solid var(--line);transition:transform .18s,border-color .18s,background .18s}.github-btn,.secondary-btn{background:var(--panel);color:var(--text)}.primary-btn{background:linear-gradient(115deg,#7c3aed,#4f46e5);border-color:#8b5cf6;color:white;box-shadow:0 7px 22px #6d28d933}.github-btn:hover,.secondary-btn:hover,.primary-btn:hover{transform:translateY(-2px);border-color:var(--accent)}.menu-btn{display:none}
+.hero{padding:57px 0 34px;display:grid;grid-template-columns:1.25fr .75fr;gap:28px;align-items:stretch}.hero-main{display:flex;align-items:center;gap:25px;min-width:0}.avatar-wrap{flex:0 0 148px;width:148px;height:148px;border-radius:50%;padding:4px;background:linear-gradient(140deg,#a855f7,#38bdf8,#312e81);box-shadow:0 0 0 8px #8b5cf616,0 12px 38px #02061760}.avatar{width:100%;height:100%;border-radius:50%;object-fit:cover;background:var(--panel);border:3px solid var(--bg)}.online{display:inline-flex;align-items:center;gap:8px;color:var(--muted);font-size:.84rem}.online:before{content:"";width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 12px #34d39988}.hero h1{font-size:clamp(2.2rem,4.6vw,3.45rem);line-height:1.05;letter-spacing:-.06em;margin:8px 0 8px;font-weight:850;overflow-wrap:anywhere}.role{color:var(--muted);margin:0 0 17px;font-size:.96rem}.bio{max-width:560px;color:var(--muted);margin:0}.socials{display:flex;gap:9px;flex-wrap:wrap;margin-top:19px}.socials a{width:38px;height:38px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--panel);color:var(--muted);font-size:.92rem;font-weight:800}.socials a:hover{color:var(--text);border-color:var(--accent);background:var(--panel2)}
+.panel{background:linear-gradient(145deg,var(--panel),color-mix(in srgb,var(--panel) 80%,#111d40));border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);min-width:0}.stats-panel{padding:20px 22px}.panel-heading{display:flex;align-items:center;gap:10px;font-size:1.02rem;font-weight:800;margin:0 0 13px}.panel-heading .symbol{font-size:1.25rem;color:var(--accent2)}.stat-row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:11px 2px;border-top:1px solid var(--line);font-size:.86rem}.stat-label{display:flex;align-items:center;gap:11px;color:var(--muted)}.stat-number{font-size:1.08rem;font-weight:800;font-variant-numeric:tabular-nums}.stat-icon{width:25px;height:25px;display:grid;place-items:center;background:var(--panel2);border-radius:8px;color:var(--accent2)}
+.dashboard{display:grid;grid-template-columns:1.05fr .95fr 1fr;gap:16px;align-items:stretch;padding:0 0 28px}.column{display:flex;flex-direction:column;gap:16px;min-width:0}.panel-pad{padding:19px}.heading-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}.heading-row .panel-heading{margin:0}.text-link{color:var(--accent2);font-size:.79rem;font-weight:700;white-space:nowrap}.text-link:hover{color:var(--accent)}.repo-list{display:flex;flex-direction:column}.repo{padding:14px 0;border-top:1px solid var(--line);min-width:0}.repo:first-child{border-top:0;padding-top:3px}.repo-title{font-weight:800;overflow-wrap:anywhere}.repo-title:hover{color:var(--accent2)}.repo-desc{color:var(--muted);font-size:.81rem;margin:3px 0 10px;overflow-wrap:anywhere}.repo-meta{display:flex;flex-wrap:wrap;gap:13px;align-items:center;color:var(--muted);font-size:.75rem}.lang-dot{width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:5px;background:var(--accent2)}.repo-topics{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}.topic{border:1px solid #38bdf833;background:#38bdf80d;color:var(--accent2);border-radius:5px;padding:2px 6px;font-size:.67rem;cursor:pointer}.topic:hover{border-color:var(--accent2);background:#38bdf81b}.profile-rows{display:grid;gap:0}.profile-row{display:flex;justify-content:space-between;gap:14px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.82rem}.profile-row span:first-child{color:var(--muted)}.profile-row span:last-child{text-align:right;overflow-wrap:anywhere}.quote{margin-top:16px;padding:14px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;color:var(--muted);font-size:.85rem;font-style:italic;text-align:center;background:var(--bg2)}.languages{display:grid;gap:13px}.language-row{display:grid;gap:5px}.language-top{display:flex;justify-content:space-between;gap:12px;font-size:.78rem}.language-top span:last-child{color:var(--muted)}.bar{height:8px;border-radius:20px;background:var(--bg2);overflow:hidden}.bar-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0;transition:width .7s}.berry-card{overflow:hidden}.berry-box{min-height:142px;display:grid;place-items:center;text-align:center;padding:18px;border:1px solid #8b5cf6;border-radius:13px;background:radial-gradient(circle at 15% 20%,#a21caf50,transparent 55%),linear-gradient(140deg,#261143,#0e1f53);color:#fff}.berry-mark{font-size:2rem;color:#e879f9}.berry-box strong{display:block;margin-top:3px}.berry-box small{display:block;color:#c4b5fd;margin-top:4px;max-width:240px}.contrib-grid{display:grid;grid-template-columns:repeat(18,minmax(0,1fr));gap:4px;margin:14px 0 12px}.contrib-cell{aspect-ratio:1;border-radius:3px;background:#14233d;min-width:0}.contrib-cell[data-level="1"]{background:#164e63}.contrib-cell[data-level="2"]{background:#0e7490}.contrib-cell[data-level="3"]{background:#0891b2}.contrib-cell[data-level="4"]{background:#22c55e}.contrib-note{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:.76rem}.time{text-align:center;padding:17px}.time-display{font-size:clamp(1.7rem,3vw,2.2rem);font-weight:750;letter-spacing:.04em;font-variant-numeric:tabular-nums}.time-date{font-size:.83rem;color:var(--muted)}.contact{margin-bottom:22px;padding:22px;display:flex;align-items:center;justify-content:space-between;gap:20px}.contact h2{font-size:1.25rem;margin:0 0 4px}.contact p{margin:0;color:var(--muted);font-size:.86rem}.contact-copy{display:flex;align-items:center;gap:14px}.contact-icon{font-size:1.7rem;color:var(--accent)}footer{border-top:1px solid var(--line);padding:20px 0;color:var(--dim);font-size:.77rem}.footer-inner{display:flex;align-items:center;justify-content:space-between;gap:16px}.footer-center{text-align:center}.footer-socials{display:flex;gap:12px}.footer-socials a{color:var(--muted)}.footer-socials a:hover{color:var(--accent2)}
+.section{padding:38px 0 22px}.section-title{font-size:1.55rem;letter-spacing:-.04em;margin:0 0 5px}.section-subtitle{color:var(--muted);margin:0 0 20px;font-size:.9rem}.project-tools{display:grid;grid-template-columns:minmax(180px,1fr) 190px 190px 160px;gap:10px;margin:18px 0}.field{width:100%;min-width:0;min-height:42px;padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--text)}.field::placeholder{color:var(--dim)}.all-projects{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px}.project-card{padding:18px;border:1px solid var(--line);border-radius:14px;background:var(--panel);min-width:0;display:flex;flex-direction:column;transition:transform .18s,border-color .18s}.project-card:hover{transform:translateY(-3px);border-color:var(--accent)}.project-card h3{font-size:1rem;margin:10px 0 6px;overflow-wrap:anywhere}.project-card p{color:var(--muted);font-size:.82rem;margin:0 0 13px;overflow-wrap:anywhere}.category{font-size:.69rem;padding:4px 7px;border-radius:6px;background:#8b5cf61a;color:#c4b5fd;border:1px solid #8b5cf633;align-self:flex-start}.project-card .repo-meta{margin-top:auto;padding-top:14px}.empty{grid-column:1/-1;padding:32px;text-align:center;border:1px dashed var(--line);border-radius:14px;color:var(--muted)}.status{padding:14px;color:var(--muted);font-size:.84rem}.error{color:#fca5a5}.hidden{display:none!important}
+@media(max-width:980px){.hero{grid-template-columns:1fr}.stats-panel{max-width:none}.dashboard{grid-template-columns:1fr 1fr}.column:last-child{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;align-items:start}.all-projects{grid-template-columns:repeat(2,minmax(0,1fr))}.project-tools{grid-template-columns:1fr 1fr}}
+@media(max-width:680px){.wrap{width:calc(100% - 28px)}.nav{min-height:62px}.navlinks{display:none;position:absolute;top:62px;left:0;right:0;background:var(--bg);padding:12px 20px 18px;border-bottom:1px solid var(--line);flex-direction:column;align-items:stretch;gap:0}.navlinks.open{display:flex}.navlinks a{padding:10px;border:0}.menu-btn{display:grid}.github-btn{display:none}.hero{padding-top:37px}.hero-main{align-items:flex-start;gap:17px}.avatar-wrap{width:86px;height:86px;flex-basis:86px}.hero h1{font-size:clamp(1.8rem,7vw,2.7rem)}.role{font-size:.84rem}.bio{font-size:.88rem}.dashboard{grid-template-columns:1fr}.column:last-child{grid-column:auto;display:flex}.all-projects{grid-template-columns:1fr}.project-tools{grid-template-columns:1fr 1fr}.project-tools input{grid-column:1/-1}.contact{align-items:flex-start;flex-direction:column}.footer-inner{flex-wrap:wrap}.footer-center{order:3;width:100%;text-align:left}.contrib-grid{gap:3px}}
+@media(max-width:400px){.hero-main{flex-direction:column}.avatar-wrap{width:90px;height:90px;flex-basis:90px}.project-tools{grid-template-columns:1fr}.project-tools input{grid-column:auto}.socials{margin-top:14px}.stats-panel{padding:16px}.panel-pad{padding:15px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
 </head>
 <body>
-    <a class="skip-link" href="#main">Skip to content</a>
-
-    <nav class="nav" id="nav" aria-label="Main navigation">
-        <div class="nav-container">
-            <a class="nav-brand" href="#" aria-label="live-by-unix home">
-                <span class="brand-mark">lx</span>
-                <span>live-by-unix</span>
-            </a>
-
-            <button class="nav-toggle" id="navToggle"
-                aria-label="Open navigation" aria-expanded="false"
-                aria-controls="navMenu">
-                <span></span><span></span><span></span>
-            </button>
-
-            <ul class="nav-menu" id="navMenu">
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#projects" class="nav-link">Projects</a></li>
-                <li><a href="#stats" class="nav-link">GitHub stats</a></li>
-                <li>
-                    <button class="theme-toggle" id="themeToggle"
-                        aria-label="Switch to light theme" title="Toggle theme">
-                        <svg class="theme-icon sun-icon" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="1.8"
-                            aria-hidden="true">
-                            <circle cx="12" cy="12" r="4"/>
-                            <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>
-                        </svg>
-                        <svg class="theme-icon moon-icon" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="1.8"
-                            aria-hidden="true">
-                            <path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/>
-                        </svg>
-                    </button>
-                </li>
-                <li>
-                    <a class="nav-link external-link"
-                        href="https://github.com/live-by-unix"
-                        target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-                </li>
-            </ul>
-        </div>
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#home" aria-label="live-by-unix home"><span class="brand-icon">›_</span><span>live-by-unix</span></a>
+    <nav class="navlinks" id="navLinks" aria-label="Main navigation">
+      <a class="active" href="#home">Home</a><a href="#about">About</a><a href="#projects">Projects</a><a href="#stats">Stats</a><a href="#contact">Contact</a>
     </nav>
-
-    <main id="main">
-        <section class="hero" aria-labelledby="heroTitle">
-            <div class="hero-glow" aria-hidden="true"></div>
-            <div class="hero-grid" aria-hidden="true"></div>
-
-            <div class="hero-content">
-                <div class="status-pill">
-                    <span class="status-dot"></span>
-                    <span>Building in the open</span>
-                </div>
-
-                <a class="hero-avatar-link"
-                    href="https://github.com/live-by-unix"
-                    target="_blank" rel="noopener noreferrer"
-                    aria-label="View live-by-unix on GitHub">
-                    <img id="avatar"
-                        src="https://github.com/live-by-unix.png"
-                        alt="live-by-unix GitHub avatar"
-                        width="112" height="112">
-                </a>
-
-                <p class="eyebrow">INDEPENDENT DEVELOPER · OPEN SOURCE</p>
-                <h1 class="hero-title" id="heroTitle">live-by-unix<span>.</span></h1>
-                <p class="hero-bio" id="heroBio">
-                    Building software, developer tools, APIs, and experiments.
-                </p>
-
-                <div class="hero-actions">
-                    <a href="#projects" class="btn btn-primary">
-                        Explore projects <span aria-hidden="true">↓</span>
-                    </a>
-                    <a href="https://github.com/live-by-unix"
-                        class="btn btn-secondary"
-                        target="_blank" rel="noopener noreferrer">
-                        <svg viewBox="0 0 16 16" aria-hidden="true">
-                            <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.7 7.7 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
-                        </svg>
-                        GitHub profile ↗
-                    </a>
-                </div>
-
-                <div class="hero-note">
-                    <span class="note-line"></span>
-                    <span>Ideas into code, one project at a time.</span>
-                </div>
-            </div>
-
-            <a class="scroll-cue" href="#about" aria-label="Scroll to About">
-                <span></span>
-            </a>
-        </section>
-
-        <section class="section section-about" id="about">
-            <div class="container narrow">
-                <p class="eyebrow section-eyebrow">01 / ABOUT</p>
-                <h2 class="section-title">Curiosity, <span>compiled.</span></h2>
-                <p class="about-description">
-                    I'm <a href="https://github.com/live-by-unix"
-                    target="_blank" rel="noopener noreferrer">@live-by-unix</a>.
-                    This is where my software projects, experiments, and
-                    open-source work come together. Explore the repository
-                    catalog, discover technologies, and dive into the code.
-                </p>
-                <div class="about-tags" aria-label="Areas of interest">
-                    <span>Open source</span>
-                    <span>Developer tools</span>
-                    <span>Web applications</span>
-                    <span>APIs</span>
-                    <span>Game development</span>
-                </div>
-            </div>
-        </section>
-
-        <section class="section section-projects" id="projects">
-            <div class="container">
-                <div class="section-heading">
-                    <div>
-                        <p class="eyebrow section-eyebrow">02 / THE WORK</p>
-                        <h2 class="section-title">Project <span>catalog.</span></h2>
-                        <p class="section-description">
-                            Repositories, experiments, and things in progress.
-                            Each card includes its GitHub topics and technology.
-                        </p>
-                    </div>
-                    <a class="text-link"
-                        href="https://github.com/live-by-unix?tab=repositories"
-                        target="_blank" rel="noopener noreferrer">
-                        All repositories ↗
-                    </a>
-                </div>
-
-                <div class="project-toolbar">
-                    <label class="search-box" for="projectSearch">
-                        <svg viewBox="0 0 24 24" fill="none"
-                            stroke="currentColor" stroke-width="1.8"
-                            aria-hidden="true">
-                            <circle cx="11" cy="11" r="7"/>
-                            <path d="m16 16 4 4"/>
-                        </svg>
-                        <input id="projectSearch" type="search"
-                            placeholder="Search projects, tags, languages..."
-                            autocomplete="off">
-                        <kbd>/</kbd>
-                    </label>
-
-                    <label class="filter-label" for="categoryFilter">
-                        <span>Category</span>
-                        <select id="categoryFilter">
-                            <option value="all">All projects</option>
-                        </select>
-                    </label>
-
-                    <label class="filter-label sort-label" for="sortFilter">
-                        <span>Sort by</span>
-                        <select id="sortFilter">
-                            <option value="pinned">Featured first</option>
-                            <option value="updated">Recently updated</option>
-                            <option value="stars">Most stars</option>
-                            <option value="name">Name A–Z</option>
-                        </select>
-                    </label>
-                </div>
-
-                <div class="topic-filters" id="topicFilters"
-                    aria-label="Popular topics">
-                    <span class="topic-filter-label">TOPICS</span>
-                    <button class="topic-filter active" data-topic="all"
-                        type="button" aria-pressed="true">All topics</button>
-                </div>
-
-                <div class="catalog-status" aria-live="polite">
-                    <span id="projectCount">Loading repositories…</span>
-                    <span class="live-indicator"><span></span> GitHub data</span>
-                </div>
-
-                <div class="projects-grid" id="projectsGrid">
-                    <div class="skeleton-card" aria-hidden="true"></div>
-                    <div class="skeleton-card" aria-hidden="true"></div>
-                    <div class="skeleton-card" aria-hidden="true"></div>
-                </div>
-
-                <div class="empty-state" id="emptyState" hidden>
-                    <span class="empty-icon">⌕</span>
-                    <h3>No matching projects</h3>
-                    <p>Try another search term, category, or topic.</p>
-                    <button class="btn btn-secondary" id="resetFilters"
-                        type="button">Clear filters</button>
-                </div>
-
-                <div class="projects-error" id="projectsError" hidden>
-                    <h3>Couldn't load repositories</h3>
-                    <p>GitHub may be temporarily unavailable or its API rate
-                        limit may have been reached.</p>
-                    <button class="btn btn-secondary" id="retryProjects"
-                        type="button">Try again</button>
-                    <a class="text-link"
-                        href="https://github.com/live-by-unix?tab=repositories"
-                        target="_blank" rel="noopener noreferrer">
-                        Browse GitHub directly ↗
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section class="section section-stats" id="stats">
-            <div class="container">
-                <div class="stats-panel">
-                    <div class="stats-heading">
-                        <div>
-                            <p class="eyebrow section-eyebrow">03 / GITHUB</p>
-                            <h2 class="section-title">The numbers<span>.</span></h2>
-                        </div>
-                        <a href="https://github.com/live-by-unix"
-                            target="_blank" rel="noopener noreferrer"
-                            class="github-mark" aria-label="GitHub profile">↗</a>
-                    </div>
-
-                    <div class="stats-content" id="statsContent">
-                        <div class="stat-item">
-                            <span class="stat-value" id="statRepos">—</span>
-                            <span class="stat-label">Public repositories</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value" id="statFollowers">—</span>
-                            <span class="stat-label">Followers</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-value" id="statFollowing">—</span>
-                            <span class="stat-label">Following</span>
-                        </div>
-                    </div>
-                    <p class="stats-footnote" id="statsFootnote">
-                        Live public profile data from GitHub.
-                    </p>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <footer class="footer">
-        <div class="container footer-inner">
-            <a class="nav-brand" href="#">live-by-unix<span>.</span></a>
-            <p>Designed with curiosity. Built in the open.</p>
-            <a href="https://github.com/live-by-unix"
-                target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+    <div class="nav-actions">
+      <button class="icon-btn" id="themeToggle" aria-label="Toggle color theme" title="Toggle theme">☾</button>
+      <a class="github-btn" href="https://github.com/live-by-unix" target="_blank" rel="noopener noreferrer">◉ View on GitHub</a>
+      <button class="menu-btn" id="menuToggle" aria-label="Open navigation" aria-expanded="false">☰</button>
+    </div>
+  </div>
+</header>
+<main class="wrap">
+  <section class="hero" id="home">
+    <div class="hero-main">
+      <div class="avatar-wrap"><img class="avatar" id="avatar" src="https://github.com/live-by-unix.png" alt="live-by-unix GitHub avatar"></div>
+      <div>
+        <span class="online">Public GitHub profile</span>
+        <h1 id="displayName">live-by-unix</h1>
+        <p class="role" id="roleLine">Developer · Problem Solver · Open Source</p>
+        <p class="bio" id="bio">Building software, developer tools, websites, and creative projects. Explore my latest open-source work below.</p>
+        <div class="socials" aria-label="Social links">
+          <a href="https://github.com/live-by-unix" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">GH</a>
+          <a href="https://github.com/live-by-unix?tab=repositories" target="_blank" rel="noopener noreferrer" aria-label="Repositories" title="Repositories">⌘</a>
+          <a href="mailto:" id="emailSocial" aria-label="Email" title="Email" class="hidden">✉</a>
+          <a href="#projects" aria-label="Projects" title="Projects">⌁</a>
         </div>
-    </footer>
+      </div>
+    </div>
+    <aside class="panel stats-panel" id="stats">
+      <h2 class="panel-heading"><span class="symbol">▥</span> Quick Stats</h2>
+      <div class="stat-row"><span class="stat-label"><span class="stat-icon">◉</span> Public repositories</span><strong class="stat-number" id="repoCount">—</strong></div>
+      <div class="stat-row"><span class="stat-label"><span class="stat-icon">♙</span> Followers</span><strong class="stat-number" id="followers">—</strong></div>
+      <div class="stat-row"><span class="stat-label"><span class="stat-icon">⑂</span> Following</span><strong class="stat-number" id="following">—</strong></div>
+      <div class="stat-row"><span class="stat-label"><span class="stat-icon">★</span> Stars on loaded repos</span><strong class="stat-number" id="starCount">—</strong></div>
+    </aside>
+  </section>
 
-    <script src="script.js" defer></script>
+  <section class="dashboard" id="about">
+    <div class="column">
+      <article class="panel panel-pad">
+        <div class="heading-row"><h2 class="panel-heading"><span class="symbol">◉</span> Latest GitHub Repos</h2><a class="text-link" href="https://github.com/live-by-unix?tab=repositories" target="_blank" rel="noopener noreferrer">View all ↗</a></div>
+        <div id="latestRepos" class="repo-list"><div class="status">Loading repositories from GitHub…</div></div>
+      </article>
+    </div>
+    <div class="column">
+      <article class="panel panel-pad">
+        <h2 class="panel-heading"><span class="symbol">♟</span> Profile</h2>
+        <div class="profile-rows">
+          <div class="profile-row"><span>Name</span><span id="profileName">live-by-unix</span></div>
+          <div class="profile-row"><span>Username</span><span>@live-by-unix</span></div>
+          <div class="profile-row"><span>Location</span><span id="profileLocation">Not specified</span></div>
+          <div class="profile-row"><span>Website</span><span id="profileWebsite">Not specified</span></div>
+          <div class="profile-row"><span>Joined GitHub</span><span id="profileJoined">—</span></div>
+        </div>
+        <div class="quote">“Build useful things. Keep learning. Ship better software.”</div>
+      </article>
+      <article class="panel panel-pad">
+        <h2 class="panel-heading"><span class="symbol">〈/〉</span> Languages</h2>
+        <div class="languages" id="languages"><div class="status">Calculating languages from repositories…</div></div>
+      </article>
+    </div>
+    <div class="column">
+      <article class="panel panel-pad berry-card">
+        <div class="heading-row"><h2 class="panel-heading"><span class="symbol">✿</span> BerrySauce</h2><a class="text-link" href="https://berrysauce.dev/" target="_blank" rel="noopener noreferrer">BerrySauce ↗</a></div>
+        <p class="muted" style="font-size:.82rem;margin:0 0 10px" id="berryStatus">Fetching pinned repositories…</p>
+        <a href="https://pinned.berrysauce.dev/get/live-by-unix" target="_blank" rel="noopener noreferrer" class="berry-box" id="berryBox">
+          <span><span class="berry-mark">✿</span><strong id="berryTitle">Loading pinned projects…</strong><small id="berryDescription">Using BerrySauce as the pinned-repository source.</small></span>
+        </a>
+      </article>
+      <article class="panel panel-pad">
+        <h2 class="panel-heading"><span class="symbol">◉</span> Contribution Activity</h2>
+        <p class="muted" style="font-size:.79rem;margin:0">A decorative activity preview. GitHub's public REST API does not provide the full contribution calendar.</p>
+        <div class="contrib-grid" id="contribGrid" aria-label="Decorative contribution activity"></div>
+        <div class="contrib-note"><span>Activity preview</span><span id="contribHint">Open GitHub profile ↗</span></div>
+      </article>
+      <article class="panel time">
+        <h2 class="panel-heading" style="justify-content:center"><span class="symbol">◷</span> Local Time</h2>
+        <div class="time-display" id="clock">--:--:--</div>
+        <div class="time-date" id="date">Loading date…</div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section" id="projects">
+    <div class="eyebrow">Open source · experiments · tools</div>
+    <h2 class="section-title">Projects & repositories</h2>
+    <p class="section-subtitle">Browse public repositories, inspect their real GitHub topics, and filter by category, language, or name.</p>
+    <div class="project-tools">
+      <input class="field" id="search" type="search" placeholder="Search repositories, descriptions, topics…" aria-label="Search repositories">
+      <select class="field" id="categoryFilter" aria-label="Filter by category"><option value="all">All categories</option></select>
+      <select class="field" id="languageFilter" aria-label="Filter by language"><option value="all">All languages</option></select>
+      <select class="field" id="sortFilter" aria-label="Sort repositories"><option value="updated">Recently updated</option><option value="stars">Most stars</option><option value="forks">Most forks</option><option value="name">Name A–Z</option></select>
+    </div>
+    <div id="projectsStatus" class="status" role="status">Connecting to GitHub…</div>
+    <div id="allProjects" class="all-projects"></div>
+  </section>
+
+  <section class="panel contact" id="contact">
+    <div class="contact-copy"><div class="contact-icon">✉</div><div><h2>Get in touch</h2><p>Questions, collaboration, or an interesting project? Find me on GitHub.</p></div></div>
+    <a class="primary-btn" href="https://github.com/live-by-unix" target="_blank" rel="noopener noreferrer">◉ Visit my GitHub ↗</a>
+  </section>
+</main>
+<footer><div class="wrap footer-inner"><a class="brand" href="#home"><span class="brand-icon">›_</span><span>live-by-unix</span></a><div class="footer-center">Built with one HTML file · Powered by GitHub API & BerrySauce</div><div class="footer-socials"><a href="https://github.com/live-by-unix" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></footer>
+
+<script>
+"use strict";
+(() => {
+  const USER = "live-by-unix";
+  const GITHUB = "https://api.github.com";
+  const BERRIES = `https://pinned.berrysauce.dev/get/${USER}`;
+  const $ = id => document.getElementById(id);
+  const state = { repos: [], pinnedRepos: [], pinnedNames: new Set(), category: "all", language: "all", query: "", sort: "updated" };
+  const number = n => new Intl.NumberFormat("en", { notation: Number(n) >= 10000 ? "compact" : "standard", maximumFractionDigits: 1 }).format(Number(n) || 0);
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  async function getJSON(url) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 12000);
+    try {
+      const response = await fetch(url, {
+        method: "GET", mode: "cors", cache: "no-store",
+        headers: { Accept: "application/vnd.github+json" }, signal: controller.signal
+      });
+      if (!response.ok) {
+        if (response.status === 403 || response.status === 429) throw new Error("GitHub API rate limit reached. Wait a minute and reload.");
+        throw new Error(`Request failed (${response.status})`);
+      }
+      return await response.json();
+    } catch (error) {
+      if (error.name === "AbortError") throw new Error("Request timed out. Check your connection and reload.");
+      if (error instanceof TypeError) throw new Error("Network/CORS request failed. Open this page through a local web server or deploy it online; avoid file://.");
+      throw error;
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+  function classify(repo) {
+    const text = `${repo.name} ${repo.description || ""} ${(repo.topics || []).join(" ")} ${repo.language || ""}`.toLowerCase();
+    const rules = [
+      ["AI & Machine Learning", /\b(ai|artificial.?intelligence|machine.?learning|llm|gpt|rag|chatbot|neural|deep.?learning)\b/],
+      ["Games", /\b(game|gaming|godot|gamedev|platformer|multiplayer)\b/],
+      ["Desktop Applications", /\b(desktop|electron|tauri|avalonia|csharp|c-sharp|dotnet|macos|windows-app)\b/],
+      ["Developer Tools", /\b(cli|terminal|compiler|editor|ide|benchmark|debug|formatter|linter|devtool|developer.?tool)\b/],
+      ["Web & APIs", /\b(web|website|frontend|backend|api|rest|cloudflare|worker|pages|html|css|javascript|typescript)\b/],
+      ["Libraries & Frameworks", /\b(library|framework|sdk|package|npm|crate|middleware)\b/],
+      ["Open Source & Utilities", /\b(utility|utilities|tool|automation|open.?source|self.?hosted|productivity)\b/]
+    ];
+    const found = rules.find(([, pattern]) => pattern.test(text));
+    return found ? found[0] : "Other";
+  }
+  function langColor(language) {
+    const colors = {JavaScript:"#f1e05a",TypeScript:"#3178c6",Python:"#3572A5",HTML:"#e34c26",CSS:"#663399",Rust:"#dea584",C:"#555555","C++":"#f34b7d",CSharp:"#178600",Shell:"#89e051",Go:"#00ADD8",PHP:"#4F5D95",Java:"#b07219",Ruby:"#701516",Swift:"#F05138",Kotlin:"#A97BFF"};
+    return colors[language] || "#38bdf8";
+  }
+  function dateLabel(dateString) {
+    if (!dateString) return "—";
+    const date = new Date(dateString);
+    return Number.isNaN(date.getTime()) ? "—" : date.toLocaleDateString(undefined, { month:"short", year:"numeric" });
+  }
+  function repoHTML(repo, compact = false) {
+    const topics = (repo.topics || []).slice(0, compact ? 4 : 7);
+    return `<article class="${compact ? "repo" : "project-card"}">
+      ${compact ? "" : `<span class="category">${esc(repo.category)}</span>`}
+      <a class="${compact ? "repo-title" : ""}" ${compact ? "" : `style="font-weight:800"`} href="${esc(repo.html_url)}" target="_blank" rel="noopener noreferrer">${esc(repo.name)} ↗</a>
+      <p class="repo-desc">${esc(repo.description || "No description provided.")}</p>
+      <div class="repo-meta">${repo.language ? `<span><i class="lang-dot" style="background:${langColor(repo.language)}"></i>${esc(repo.language)}</span>` : ""}<span>★ ${number(repo.stargazers_count)}</span><span>⑂ ${number(repo.forks_count)}</span></div>
+      ${topics.length ? `<div class="repo-topics">${topics.map(t => `<button class="topic" type="button" data-topic="${esc(t)}" title="Filter by topic ${esc(t)}">#${esc(t)}</button>`).join("")}</div>` : `<div class="repo-topics"><span class="topic" style="cursor:default">No topics set</span></div>`}
+      ${compact ? "" : `<div class="repo-meta" style="margin-top:12px">Updated ${esc(dateLabel(repo.updated_at))}${repo.archived ? " · Archived" : ""}</div>`}
+    </article>`;
+  }
+  function renderLatest() {
+    const sorted = [...state.repos].sort((a,b) => new Date(b.pushed_at || b.updated_at || 0) - new Date(a.pushed_at || a.updated_at || 0)).slice(0,5);
+    $("latestRepos").innerHTML = sorted.length ? sorted.map(r => repoHTML(r, true)).join("") : `<div class="status">No public repositories found.</div>`;
+    bindTopicButtons($("latestRepos"));
+  }
+  function fillFilters() {
+    const categories = [...new Set(state.repos.map(r => r.category))].sort();
+    const languages = [...new Set(state.repos.map(r => r.language).filter(Boolean))].sort();
+    $("categoryFilter").innerHTML = `<option value="all">All categories</option>${categories.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join("")}`;
+    $("languageFilter").innerHTML = `<option value="all">All languages</option>${languages.map(l=>`<option value="${esc(l)}">${esc(l)}</option>`).join("")}`;
+  }
+  function renderProjects() {
+    let repos = [...state.repos];
+    if (state.query) repos = repos.filter(r => `${r.name} ${r.description || ""} ${r.language || ""} ${r.category} ${(r.topics || []).join(" ")}`.toLowerCase().includes(state.query));
+    if (state.category !== "all") repos = repos.filter(r => r.category === state.category);
+    if (state.language !== "all") repos = repos.filter(r => r.language === state.language);
+    if (state.sort === "stars") repos.sort((a,b) => b.stargazers_count - a.stargazers_count);
+    else if (state.sort === "forks") repos.sort((a,b) => b.forks_count - a.forks_count);
+    else if (state.sort === "name") repos.sort((a,b) => a.name.localeCompare(b.name));
+    else repos.sort((a,b) => new Date(b.updated_at || 0) - new Date(a.updated_at || 0));
+    $("projectsStatus").textContent = `${repos.length} of ${state.repos.length} public repositories${state.pinnedNames.size ? ` · ${state.pinnedNames.size} pinned by BerrySauce` : ""}`;
+    $("allProjects").innerHTML = repos.length ? repos.map(r => repoHTML(r)).join("") : `<div class="empty">No repositories match those filters. Try a different search or category.</div>`;
+    bindTopicButtons($("allProjects"));
+  }
+  function bindTopicButtons(root) {
+    root.querySelectorAll("[data-topic]").forEach(btn => btn.addEventListener("click", () => {
+      $("search").value = btn.dataset.topic;
+      state.query = btn.dataset.topic.toLowerCase();
+      $("categoryFilter").value = "all"; state.category = "all";
+      $("languageFilter").value = "all"; state.language = "all";
+      renderProjects(); $("projects").scrollIntoView({behavior:"smooth"});
+    }));
+  }
+  function renderLanguages() {
+    const counts = {};
+    state.repos.forEach(r => { if (r.language) counts[r.language] = (counts[r.language] || 0) + 1; });
+    const entries = Object.entries(counts).sort((a,b) => b[1] - a[1]).slice(0,6);
+    if (!entries.length) { $("languages").innerHTML = `<div class="status">Language data unavailable.</div>`; return; }
+    const total = entries.reduce((sum, [,count]) => sum + count, 0);
+    $("languages").innerHTML = entries.map(([name,count]) => {
+      const percent = Math.round(count / total * 100);
+      return `<div class="language-row"><div class="language-top"><strong>${esc(name)}</strong><span>${percent}%</span></div><div class="bar"><div class="bar-fill" style="width:${percent}%;background:${langColor(name)}"></div></div></div>`;
+    }).join("");
+  }
+  async function loadProfile() {
+    try {
+      const user = await getJSON(`${GITHUB}/users/${USER}`);
+      $("avatar").src = user.avatar_url || `https://github.com/${USER}.png`;
+      $("displayName").textContent = user.name || USER;
+      $("bio").textContent = user.bio || "Building software, developer tools, websites, and creative projects. Explore my latest open-source work below.";
+      $("repoCount").textContent = number(user.public_repos);
+      $("followers").textContent = number(user.followers);
+      $("following").textContent = number(user.following);
+      $("profileName").textContent = user.name || USER;
+      $("profileLocation").textContent = user.location || "Not specified";
+      $("profileJoined").textContent = dateLabel(user.created_at);
+      if (user.blog) {
+        const url = /^https?:\/\//i.test(user.blog) ? user.blog : `https://${user.blog}`;
+        $("profileWebsite").innerHTML = `<a class="text-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">Website ↗</a>`;
+      }
+      if (user.email) {
+        $("emailSocial").href = `mailto:${user.email}`;
+        $("emailSocial").classList.remove("hidden");
+      }
+    } catch (error) {
+      console.warn("GitHub profile API error:", error);
+      $("bio").textContent = "Explore public repositories and open-source projects by live-by-unix.";
+    }
+  }
+  async function loadPinned() {
+    try {
+      const data = await getJSON(BERRIES);
+      const list = Array.isArray(data) ? data : Array.isArray(data?.pinned) ? data.pinned : Array.isArray(data?.repositories) ? data.repositories : Array.isArray(data?.items) ? data.items : [];
+      state.pinnedRepos = list.map(item => {
+        const fullName = item.full_name || item.fullName || item.repository || item.repo || item.name || "";
+        const name = String(fullName).split("/").pop();
+        const owner = String(fullName).includes("/") ? String(fullName).split("/")[0] : USER;
+        const htmlUrl = item.html_url || item.url || item.repository_url || `https://github.com/${owner}/${name}`;
+        return {
+          id: item.id || htmlUrl,
+          name,
+          full_name: `${owner}/${name}`,
+          html_url: htmlUrl,
+          description: item.description || item.desc || "Pinned GitHub repository.",
+          language: item.language || null,
+          topics: Array.isArray(item.topics) ? item.topics : Array.isArray(item.tags) ? item.tags : [],
+          stargazers_count: Number(item.stars ?? item.stargazers_count ?? 0) || 0,
+          forks_count: Number(item.forks ?? item.forks_count ?? 0) || 0,
+          updated_at: item.updated_at || item.updatedAt || null,
+          pushed_at: item.pushed_at || null,
+          archived: Boolean(item.archived),
+          category: classify({name, description:item.description || item.desc || "", language:item.language || "", topics:item.topics || item.tags || []})
+        };
+      }).filter(repo => repo.name && repo.html_url);
+      state.pinnedRepos.forEach(repo => state.pinnedNames.add(repo.name.toLowerCase()));
+      if (list.length) {
+        $("berryStatus").textContent = `${list.length} pinned repositories returned by BerrySauce.`;
+        $("berryTitle").textContent = `${list.length} pinned project${list.length === 1 ? "" : "s"} found`;
+        $("berryDescription").textContent = "Your GitHub pinned repository list loaded successfully.";
+      } else {
+        $("berryStatus").textContent = "BerrySauce responded, but no pinned repositories were returned.";
+        $("berryTitle").textContent = "No pinned projects found";
+        $("berryDescription").textContent = "Pin repositories on your GitHub profile to feature them here.";
+      }
+    } catch (error) {
+      console.warn("BerrySauce API error:", error);
+      $("berryStatus").textContent = "BerrySauce is unavailable right now.";
+      $("berryTitle").textContent = "Pinned list unavailable";
+      $("berryDescription").textContent = "The rest of the portfolio still works using the GitHub API.";
+    }
+  }
+  async function loadRepositories() {
+    $("projectsStatus").textContent = "Loading repositories from GitHub…";
+    try {
+      let repos = [];
+      for (let page = 1; page <= 3; page++) {
+        const batch = await getJSON(`${GITHUB}/users/${USER}/repos?per_page=100&page=${page}&sort=updated`);
+        if (!Array.isArray(batch) || !batch.length) break;
+        repos = repos.concat(batch);
+        if (batch.length < 100) break;
+      }
+      state.repos = repos.filter(r => !r.private).map(r => ({...r, topics:Array.isArray(r.topics)?r.topics:[], category:classify(r)}));
+      if (state.pinnedRepos.length) {
+        const byName = new Map(state.repos.map(repo => [repo.name.toLowerCase(), repo]));
+        state.pinnedRepos = state.pinnedRepos.map(pinned => ({...(byName.get(pinned.name.toLowerCase()) || {}), ...pinned, ...(byName.has(pinned.name.toLowerCase()) ? {topics:byName.get(pinned.name.toLowerCase()).topics, language:byName.get(pinned.name.toLowerCase()).language, description:byName.get(pinned.name.toLowerCase()).description, stargazers_count:byName.get(pinned.name.toLowerCase()).stargazers_count, forks_count:byName.get(pinned.name.toLowerCase()).forks_count, updated_at:byName.get(pinned.name.toLowerCase()).updated_at, html_url:byName.get(pinned.name.toLowerCase()).html_url} : {})}));
+      }
+      $("starCount").textContent = number(state.repos.reduce((sum,r)=>sum+(r.stargazers_count||0),0));
+      renderLatest(); fillFilters(); renderLanguages(); renderProjects();
+    } catch (error) {
+      console.error("GitHub repository API error:", error);
+      console.warn("Using BerrySauce pinned repositories as fallback.", error);
+      if (state.pinnedRepos.length) {
+        state.repos = state.pinnedRepos.map(repo => ({...repo, topics:Array.isArray(repo.topics)?repo.topics:[], category:repo.category || classify(repo)}));
+        $("starCount").textContent = number(state.repos.reduce((sum,r)=>sum+(r.stargazers_count||0),0));
+        renderLatest(); fillFilters(); renderLanguages(); renderProjects();
+        $("projectsStatus").textContent = `Showing ${state.repos.length} BerrySauce pinned repositories. GitHub's repository API could not be reached.`;
+      } else {
+        $("projectsStatus").innerHTML = `<span class="error">Could not load repositories: ${esc(error.message)}. Check your connection or try again later.</span>`;
+        $("allProjects").innerHTML = `<div class="empty">Neither GitHub nor BerrySauce returned repository data. Check your internet connection and try again.</div>`;
+        $("latestRepos").innerHTML = `<div class="status error">Repository data unavailable. Try reloading when the APIs are reachable.</div>`;
+      }
+    }
+  }
+  function makeContributionPreview() {
+    const grid = $("contribGrid");
+    let seed = 23;
+    for (let i=0;i<126;i++) {
+      seed = (seed * 9301 + 49297) % 233280;
+      const level = seed / 233280 > .72 ? Math.min(4,Math.floor((seed/233280-.65)*10)+1) : 0;
+      const cell = document.createElement("span");
+      cell.className = "contrib-cell";
+      cell.dataset.level = String(level);
+      cell.title = "Decorative activity preview — visit GitHub for real contributions";
+      grid.appendChild(cell);
+    }
+  }
+  function tickClock() {
+    const now = new Date();
+    $("clock").textContent = now.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit",second:"2-digit"});
+    $("date").textContent = now.toLocaleDateString([], {weekday:"long",month:"long",day:"numeric",year:"numeric"});
+  }
+  function setupControls() {
+    $("search").addEventListener("input", e => {state.query=e.target.value.trim().toLowerCase();renderProjects();});
+    $("categoryFilter").addEventListener("change", e => {state.category=e.target.value;renderProjects();});
+    $("languageFilter").addEventListener("change", e => {state.language=e.target.value;renderProjects();});
+    $("sortFilter").addEventListener("change", e => {state.sort=e.target.value;renderProjects();});
+    $("themeToggle").addEventListener("click", () => {
+      const next = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+      document.documentElement.dataset.theme = next;
+      $("themeToggle").textContent = next === "dark" ? "☾" : "☀";
+      localStorage.setItem("live-by-unix-theme", next);
+    });
+    const saved = localStorage.getItem("live-by-unix-theme");
+    if (saved === "light" || saved === "dark") {
+      document.documentElement.dataset.theme = saved;
+      $("themeToggle").textContent = saved === "dark" ? "☾" : "☀";
+    }
+    $("menuToggle").addEventListener("click", () => {
+      const open = $("navLinks").classList.toggle("open");
+      $("menuToggle").setAttribute("aria-expanded", String(open));
+      $("menuToggle").setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+    });
+    $("navLinks").querySelectorAll("a").forEach(a => a.addEventListener("click", () => {
+      $("navLinks").classList.remove("open"); $("menuToggle").setAttribute("aria-expanded","false");
+    }));
+  }
+  async function init() {
+    setupControls(); makeContributionPreview(); tickClock(); setInterval(tickClock,1000);
+    await Promise.allSettled([loadProfile(), loadPinned(), loadRepositories()]);
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, {once:true});
+  else init();
+})();
+</script>
 </body>
 </html>
