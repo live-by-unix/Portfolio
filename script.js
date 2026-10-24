@@ -2,116 +2,100 @@
 "use strict";
 
 const GITHUB_USERNAME = "live-by-unix";
-const GITHUB_API = "https://api.github.com";
-const PROFILE_URL = `${GITHUB_API}/users/${GITHUB_USERNAME}`;
-const REPOSITORIES_URL =
-    `${GITHUB_API}/users/${GITHUB_USERNAME}/repos?per_page=100&sort=updated`;
-const PINNED_URL =
-    `https://pinned.berrysauce.dev/get/${GITHUB_USERNAME}`;
-const THEME_KEY = "portfolio-theme";
-const CACHE_TTL = 5 * 60 * 1000;
+const GITHUB_API = `https://api.github.com/users/${GITHUB_USERNAME}`;
+const BERRIES_API = `https://pinned.berrysauce.dev/get/${GITHUB_USERNAME}`;
 
-const cache = new Map();
+const elements = {
+    projectsGrid: document.getElementById("projectsGrid"),
+    projectsLoading: document.getElementById("projectsLoading"),
+    projectsError: document.getElementById("projectsError"),
+    avatar: document.getElementById("avatar"),
+    heroBio: document.getElementById("heroBio"),
+    followers: document.getElementById("followers"),
+    publicRepos: document.getElementById("publicRepos"),
+    totalStars: document.getElementById("totalStars"),
+    themeToggle: document.getElementById("themeToggle"),
+    mobileMenuToggle: document.getElementById("mobileMenuToggle"),
+    navLinks: document.getElementById("navLinks")
+};
 
 const state = {
     repositories: [],
     search: "",
     category: "all",
     topic: "all",
-    sort: "pinned",
-    loaded: false,
-    loading: false,
-    pinnedNames: new Set()
-};
-
-const LANGUAGE_COLORS = {
-    JavaScript: "#f1e05a",
-    TypeScript: "#3178c6",
-    Python: "#3572a5",
-    Java: "#b07219",
-    Go: "#00add8",
-    Rust: "#dea584",
-    "C++": "#f34b7d",
-    C: "#555555",
-    Ruby: "#701516",
-    PHP: "#4f5d95",
-    Swift: "#f05138",
-    Kotlin: "#a97bff",
-    Dart: "#00b4ab",
-    Shell: "#89e051",
-    HTML: "#e34c26",
-    CSS: "#563d7c",
-    Vue: "#41b883",
-    Svelte: "#ff3e00",
-    CSharp: "#178600",
-    "C#": "#178600",
-    Lua: "#000080",
-    Zig: "#ec915c",
-    Dockerfile: "#384d54"
+    sort: "pinned"
 };
 
 const CATEGORY_RULES = [
     {
-        name: "APIs & Backend",
-        icon: "API",
-        terms: ["api", "backend", "rest-api", "graphql", "worker",
-            "server", "database", "webhook", "microservice"]
-    },
-    {
-        name: "Web & Websites",
-        icon: "WEB",
-        terms: ["web", "website", "frontend", "html", "css",
-            "javascript", "typescript", "react", "vue", "svelte"]
+        name: "AI & Machine Learning",
+        keywords: [
+            "ai", "artificial-intelligence", "machine-learning", "llm",
+            "llms", "rag", "chatbot", "gpt", "deep-learning", "neural-network"
+        ]
     },
     {
         name: "Developer Tools",
-        icon: "DEV",
-        terms: ["developer-tools", "devtools", "cli", "terminal",
-            "compiler", "editor", "ide", "debugging", "benchmark"]
+        keywords: [
+            "developer-tools", "devtools", "cli", "terminal", "compiler",
+            "formatter", "linter", "editor", "ide", "benchmark", "debugging"
+        ]
     },
     {
-        name: "AI & Machine Learning",
-        icon: "AI",
-        terms: ["ai", "artificial-intelligence", "machine-learning",
-            "llm", "rag", "agents", "deep-learning", "neural-network"]
+        name: "Web & APIs",
+        keywords: [
+            "web", "website", "webapp", "web-app", "frontend", "backend",
+            "api", "rest-api", "cloudflare", "workers", "pages", "html",
+            "css", "javascript", "typescript"
+        ]
     },
     {
-        name: "Games & Game Development",
-        icon: "GAME",
-        terms: ["game", "games", "gamedev", "game-development",
-            "godot", "unity", "gaming", "multiplayer"]
+        name: "Games",
+        keywords: [
+            "game", "games", "gaming", "godot", "gamedev", "game-development",
+            "platformer", "multiplayer"
+        ]
     },
     {
         name: "Desktop Applications",
-        icon: "APP",
-        terms: ["desktop", "desktop-app", "tauri", "electron",
-            "avalonia", "qt", "gtk"]
+        keywords: [
+            "desktop", "desktop-app", "electron", "tauri", "avalonia",
+            "dotnet", "csharp", "c-sharp", "windows", "macos", "linux-app"
+        ]
     },
     {
         name: "Libraries & Frameworks",
-        icon: "LIB",
-        terms: ["library", "libraries", "framework", "frameworks",
-            "sdk", "package", "npm", "open-source"]
+        keywords: [
+            "library", "libraries", "framework", "frameworks", "sdk",
+            "package", "npm", "rust-crate", "middleware"
+        ]
     },
     {
-        name: "Utilities & Experiments",
-        icon: "TOOL",
-        terms: ["utility", "utilities", "tool", "tools", "experiment",
-            "experiments", "automation", "script"]
+        name: "Open Source & Utilities",
+        keywords: [
+            "utility", "utilities", "tool", "tools", "automation",
+            "open-source", "opensource", "self-hosted", "productivity"
+        ]
     }
 ];
 
-const LANGUAGE_ALIASES = {
-    "c#": "C#",
-    csharp: "C#",
-    "f#": "F#",
-    golang: "Go",
-    js: "JavaScript",
-    ts: "TypeScript"
+const CATEGORY_COLORS = {
+    "AI & Machine Learning": "purple",
+    "Developer Tools": "blue",
+    "Web & APIs": "cyan",
+    "Games": "green",
+    "Desktop Applications": "orange",
+    "Libraries & Frameworks": "pink",
+    "Open Source & Utilities": "gray",
+    "Other": "gray"
 };
 
-function $(id) {
-    return document.getElementById(id);
+function normalizeText(value) {
+    return String(value || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9+#.-]+/g, " ")
+        .trim();
 }
 
 function escapeHTML(value) {
@@ -124,837 +108,650 @@ function escapeHTML(value) {
     })[character]);
 }
 
-function normalize(value) {
-    return String(value ?? "").trim().toLowerCase();
-}
-
-function unique(values) {
-    return [...new Set(values.filter(Boolean))];
-}
-
 function formatNumber(value) {
-    return new Intl.NumberFormat("en-US", {
-        notation: "compact",
+    return new Intl.NumberFormat("en", {
+        notation: Number(value) >= 10000 ? "compact" : "standard",
         maximumFractionDigits: 1
     }).format(Number(value) || 0);
 }
 
-function formatDate(value) {
-    if (!value) return "";
-
-    const date = new Date(value);
-
-    if (Number.isNaN(date.getTime())) return "";
-
-    return new Intl.DateTimeFormat(undefined, {
-        month: "short",
-        day: "numeric",
-        year: "numeric"
-    }).format(date);
-}
-
-function safeExternalURL(value, fallback) {
-    try {
-        const url = new URL(value || fallback);
-
-        if (url.protocol !== "https:" || url.hostname !== "github.com") {
-            return fallback;
-        }
-
-        return url.href;
-    } catch {
-        return fallback;
-    }
-}
-
-function setText(id, value) {
-    const element = $(id);
-
-    if (element) {
-        element.textContent = String(value ?? "");
-    }
-}
-
-function show(id) {
-    const element = $(id);
-
-    if (element) element.hidden = false;
-}
-
-function hide(id) {
-    const element = $(id);
-
-    if (element) element.hidden = true;
-}
-
-function getTheme() {
-    try {
-        const saved = localStorage.getItem(THEME_KEY);
-
-        if (saved === "light" || saved === "dark") {
-            return saved;
-        }
-    } catch {}
-
-    return matchMedia("(prefers-color-scheme: light)").matches
-        ? "light"
-        : "dark";
-}
-
-function setTheme(theme) {
-    const selected = theme === "light" ? "light" : "dark";
-
-    document.documentElement.dataset.theme = selected;
-
-    const button = $("themeToggle");
-
-    if (button) {
-        button.setAttribute(
-            "aria-label",
-            selected === "dark"
-                ? "Switch to light theme"
-                : "Switch to dark theme"
-        );
-    }
-
-    const themeColor = document.querySelector('meta[name="theme-color"]');
-
-    if (themeColor) {
-        themeColor.content = selected === "dark" ? "#090b10" : "#f8faff";
-    }
-
-    try {
-        localStorage.setItem(THEME_KEY, selected);
-    } catch {}
-}
-
-function initTheme() {
-    setTheme(getTheme());
-
-    $("themeToggle")?.addEventListener("click", () => {
-        setTheme(
-            document.documentElement.dataset.theme === "dark"
-                ? "light"
-                : "dark"
-        );
-    });
-}
-
-async function fetchJSON(url, options = {}) {
-    const cached = cache.get(url);
-
-    if (!options.noCache && cached && Date.now() - cached.time < CACHE_TTL) {
-        return cached.data;
-    }
-
+async function fetchJSON(url) {
     const response = await fetch(url, {
         headers: {
-            Accept: "application/vnd.github+json",
-            "X-GitHub-Api-Version": "2022-11-28",
-            ...options.headers
+            Accept: "application/vnd.github+json"
         }
     });
 
     if (!response.ok) {
-        if (response.status === 403 || response.status === 429) {
-            throw new Error("GitHub API rate limit reached. Try again later.");
-        }
-
-        if (response.status === 404) {
-            throw new Error("Repository or profile not found.");
-        }
-
-        throw new Error(`Request failed with HTTP ${response.status}.`);
+        throw new Error(`Request failed (${response.status}): ${url}`);
     }
 
-    const data = await response.json();
+    return response.json();
+}
 
-    cache.set(url, {
-        data,
-        time: Date.now()
-    });
+function getRepositoryName(repository) {
+    return repository.name || repository.repo || "";
+}
 
-    return data;
+function getRepositoryURL(repository) {
+    return repository.html_url ||
+        repository.url ||
+        `https://github.com/${GITHUB_USERNAME}/${getRepositoryName(repository)}`;
+}
+
+function normalizeRepository(repository, index) {
+    const name = getRepositoryName(repository);
+    const url = getRepositoryURL(repository);
+
+    return {
+        id: repository.id || `${name}-${index}`,
+        name,
+        fullName: repository.full_name || `${GITHUB_USERNAME}/${name}`,
+        description: repository.description || "No description provided yet.",
+        url,
+        homepage: repository.homepage || "",
+        language: repository.language || null,
+        languageColor: repository.languageColor || repository.language_color || null,
+        stars: Number(repository.stargazers_count ?? repository.stars ?? 0),
+        forks: Number(repository.forks_count ?? repository.forks ?? 0),
+        topics: Array.isArray(repository.topics) ? repository.topics : [],
+        category: "Other",
+        isPinned: true,
+        updatedAt: repository.updated_at || null,
+        archived: Boolean(repository.archived),
+        fork: Boolean(repository.fork)
+    };
+}
+
+function classifyRepository(repository) {
+    const text = normalizeText([
+        repository.name,
+        repository.description,
+        repository.language,
+        ...(repository.topics || [])
+    ].join(" "));
+
+    let bestCategory = "Other";
+    let bestScore = 0;
+
+    for (const rule of CATEGORY_RULES) {
+        let score = 0;
+
+        for (const keyword of rule.keywords) {
+            if (text.includes(normalizeText(keyword))) {
+                score++;
+            }
+        }
+
+        if (score > bestScore) {
+            bestScore = score;
+            bestCategory = rule.name;
+        }
+    }
+
+    repository.category = bestCategory;
+    return repository;
+}
+
+async function loadPinnedRepositories() {
+    const pinnedData = await fetchJSON(BERRIES_API);
+
+    const pinnedRepositories = Array.isArray(pinnedData)
+        ? pinnedData
+        : Array.isArray(pinnedData?.pinned)
+            ? pinnedData.pinned
+            : [];
+
+    if (pinnedRepositories.length === 0) {
+        throw new Error("BerrySauce did not return any pinned repositories.");
+    }
+
+    const repositories = pinnedRepositories
+        .map((repository, index) => normalizeRepository(repository, index))
+        .filter(repository => repository.name);
+
+    const details = await Promise.all(
+        repositories.map(async repository => {
+            try {
+                const detail = await fetchJSON(
+                    `https://api.github.com/repos/${repository.fullName}`
+                );
+
+                return {
+                    ...repository,
+                    description: detail.description || repository.description,
+                    url: detail.html_url || repository.url,
+                    homepage: detail.homepage || repository.homepage,
+                    language: detail.language || repository.language,
+                    stars: Number(detail.stargazers_count ?? repository.stars),
+                    forks: Number(detail.forks_count ?? repository.forks),
+                    topics: Array.isArray(detail.topics)
+                        ? detail.topics
+                        : repository.topics,
+                    updatedAt: detail.updated_at || repository.updatedAt,
+                    archived: Boolean(detail.archived),
+                    fork: Boolean(detail.fork),
+                    isPinned: true
+                };
+            } catch (error) {
+                console.warn(`Could not load details for ${repository.name}:`, error);
+                return repository;
+            }
+        })
+    );
+
+    return details.map(classifyRepository);
 }
 
 async function loadProfile() {
     try {
-        const profile = await fetchJSON(PROFILE_URL);
+        const profile = await fetchJSON(GITHUB_API);
 
-        if (profile.avatar_url) {
-            $("avatar").src = profile.avatar_url;
+        if (elements.avatar && profile.avatar_url) {
+            elements.avatar.src = profile.avatar_url;
+            elements.avatar.alt = `${GITHUB_USERNAME}'s GitHub avatar`;
         }
 
-        setText(
-            "heroBio",
-            profile.bio || "Building software, developer tools, APIs, and experiments."
-        );
+        if (elements.heroBio) {
+            elements.heroBio.textContent =
+                profile.bio || "Building software, tools, and creative projects.";
+        }
 
-        setText("statRepos", formatNumber(profile.public_repos));
-        setText("statFollowers", formatNumber(profile.followers));
-        setText("statFollowing", formatNumber(profile.following));
+        if (elements.followers) {
+            elements.followers.textContent = formatNumber(profile.followers);
+        }
 
-        setText("statsFootnote", "Live public profile data from GitHub.");
+        if (elements.publicRepos) {
+            elements.publicRepos.textContent = formatNumber(profile.public_repos);
+        }
+
+        if (elements.totalStars) {
+            elements.totalStars.textContent = "—";
+        }
+
+        return profile;
     } catch (error) {
-        console.warn("GitHub profile could not be loaded:", error);
+        console.warn("Could not load GitHub profile:", error);
+        return null;
+    }
+}
 
-        setText(
-            "statsFootnote",
-            "Profile statistics are temporarily unavailable. Visit GitHub for current information."
+function calculateTotalStars(repositories) {
+    return repositories.reduce((total, repository) => total + repository.stars, 0);
+}
+
+function updateTotalStars() {
+    if (elements.totalStars) {
+        elements.totalStars.textContent = formatNumber(
+            calculateTotalStars(state.repositories)
         );
     }
 }
 
-function getLanguageColor(language) {
-    return LANGUAGE_COLORS[language] || "#8793a5";
-}
+function getAllTopics() {
+    const topics = new Set();
 
-function normalizeLanguage(language) {
-    if (!language) return "Unknown";
-
-    const key = normalize(language);
-
-    return LANGUAGE_ALIASES[key] ||
-        language;
-}
-
-function getRepositoryName(repo) {
-    return repo.name || repo.repo || "";
-}
-
-function getRepositoryURL(repo) {
-    const name = getRepositoryName(repo);
-
-    return safeExternalURL(
-        repo.html_url || repo.url,
-        `https://github.com/${GITHUB_USERNAME}/${encodeURIComponent(name)}`
-    );
-}
-
-function normalizeRepository(repo, index, isPinned = false) {
-    const name = getRepositoryName(repo);
-
-    return {
-        name,
-        description: repo.description || "",
-        url: getRepositoryURL(repo),
-        language: normalizeLanguage(repo.language),
-        languageColor: repo.languageColor ||
-            getLanguageColor(repo.language),
-        stars: Number(repo.stargazers_count ?? repo.stars ?? 0),
-        forks: Number(repo.forks_count ?? repo.forks ?? 0),
-        topics: unique(
-            (Array.isArray(repo.topics) ? repo.topics : [])
-                .map(topic => normalize(topic).replace(/^#/, ""))
-        ),
-        category: "",
-        categoryIcon: "",
-        updatedAt: repo.updated_at || repo.updatedAt || "",
-        isPinned,
-        index,
-        archived: Boolean(repo.archived),
-        fork: Boolean(repo.fork),
-        license: repo.license?.spdx_id || null
-    };
-}
-
-async function loadPinnedRepositories() {
-    try {
-        const result = await fetchJSON(PINNED_URL);
-
-        const repos = Array.isArray(result)
-            ? result
-            : Array.isArray(result.pinned)
-                ? result.pinned
-                : [];
-
-        return repos
-            .map((repo, index) => normalizeRepository(repo, index, true))
-            .filter(repo => repo.name);
-    } catch (error) {
-        console.warn("Pinned repositories unavailable:", error);
-        return [];
-    }
-}
-
-async function loadAllRepositories() {
-    const result = await fetchJSON(REPOSITORIES_URL);
-
-    if (!Array.isArray(result)) {
-        throw new Error("GitHub returned an unexpected repository response.");
-    }
-
-    return result
-        .filter(repo => !repo.private)
-        .map((repo, index) => normalizeRepository(repo, index));
-}
-
-function categorizeRepository(repo) {
-    const searchable = normalize([
-        repo.name,
-        repo.description,
-        repo.language,
-        ...repo.topics
-    ].join(" "));
-
-    for (const rule of CATEGORY_RULES) {
-        const matches = rule.terms.some(term => {
-            if (repo.topics.includes(term)) return true;
-
-            const escaped = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-            return new RegExp(`(^|[^a-z0-9])${escaped}([^a-z0-9]|$)`)
-                .test(searchable);
-        });
-
-        if (matches) {
-            return {
-                name: rule.name,
-                icon: rule.icon
-            };
+    for (const repository of state.repositories) {
+        for (const topic of repository.topics) {
+            if (topic) topics.add(topic);
         }
     }
 
-    return {
-        name: "Other Projects",
-        icon: "OTHER"
-    };
+    return [...topics].sort((a, b) => a.localeCompare(b));
 }
 
-async function fetchRepositoryTopics(repo) {
-    const url = `${GITHUB_API}/repos/${GITHUB_USERNAME}/${encodeURIComponent(repo.name)}`;
+function getAllCategories() {
+    return [...new Set(state.repositories.map(repository => repository.category))]
+        .sort((a, b) => a.localeCompare(b));
+}
 
-    try {
-        const details = await fetchJSON(url);
+function ensureFilterControls() {
+    const projectsSection = elements.projectsGrid?.parentElement;
+    if (!projectsSection) return;
 
-        repo.topics = unique(
-            (Array.isArray(details.topics) ? details.topics : [])
-                .map(topic => normalize(topic))
+    let controls = document.getElementById("projectControls");
+
+    if (!controls) {
+        controls = document.createElement("div");
+        controls.id = "projectControls";
+        controls.className = "project-controls";
+
+        controls.innerHTML = `
+            <div class="project-search">
+                <label class="sr-only" for="projectSearch">Search projects</label>
+                <input
+                    id="projectSearch"
+                    type="search"
+                    placeholder="Search projects, languages, or topics..."
+                    autocomplete="off"
+                >
+            </div>
+            <div class="project-filter-row">
+                <label>
+                    <span>Category</span>
+                    <select id="categoryFilter">
+                        <option value="all">All categories</option>
+                    </select>
+                </label>
+                <label>
+                    <span>GitHub topic</span>
+                    <select id="topicFilter">
+                        <option value="all">All topics</option>
+                    </select>
+                </label>
+                <label>
+                    <span>Sort</span>
+                    <select id="projectSort">
+                        <option value="pinned">Pinned order</option>
+                        <option value="stars">Most stars</option>
+                        <option value="forks">Most forks</option>
+                        <option value="name">Name A–Z</option>
+                        <option value="updated">Recently updated</option>
+                    </select>
+                </label>
+            </div>
+        `;
+
+        elements.projectsGrid.parentElement.insertBefore(
+            controls,
+            elements.projectsGrid
         );
-
-        repo.description = details.description || repo.description;
-        repo.language = normalizeLanguage(details.language || repo.language);
-        repo.languageColor = getLanguageColor(repo.language);
-        repo.stars = Number(details.stargazers_count ?? repo.stars);
-        repo.forks = Number(details.forks_count ?? repo.forks);
-        repo.updatedAt = details.updated_at || repo.updatedAt;
-        repo.archived = Boolean(details.archived);
-        repo.fork = Boolean(details.fork);
-        repo.license = details.license?.spdx_id || null;
-    } catch (error) {
-        console.warn(`Could not load topics for ${repo.name}:`, error);
     }
 
-    const category = categorizeRepository(repo);
+    const searchInput = document.getElementById("projectSearch");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const topicFilter = document.getElementById("topicFilter");
+    const sortFilter = document.getElementById("projectSort");
 
-    repo.category = category.name;
-    repo.categoryIcon = category.icon;
+    if (categoryFilter) {
+        const previous = categoryFilter.value;
 
-    return repo;
-}
+        categoryFilter.innerHTML = `
+            <option value="all">All categories</option>
+            ${getAllCategories().map(category => `
+                <option value="${escapeHTML(category)}">${escapeHTML(category)}</option>
+            `).join("")}
+        `;
 
-async function mapWithConcurrency(items, limit, callback) {
-    const results = new Array(items.length);
-    let nextIndex = 0;
-
-    async function worker() {
-        while (true) {
-            const index = nextIndex++;
-
-            if (index >= items.length) return;
-
-            results[index] = await callback(items[index], index);
-        }
+        categoryFilter.value = getAllCategories().includes(previous)
+            ? previous
+            : "all";
     }
 
-    await Promise.all(
-        Array.from(
-            { length: Math.min(limit, items.length) },
-            () => worker()
-        )
-    );
+    if (topicFilter) {
+        const previous = topicFilter.value;
 
-    return results;
-}
+        topicFilter.innerHTML = `
+            <option value="all">All topics</option>
+            ${getAllTopics().map(topic => `
+                <option value="${escapeHTML(topic)}">${escapeHTML(topic)}</option>
+            `).join("")}
+        `;
 
-function mergeRepositories(pinned, all) {
-    const merged = new Map();
+        topicFilter.value = getAllTopics().includes(previous) ? previous : "all";
+    }
 
-    all.forEach((repo, index) => {
-        merged.set(repo.name.toLowerCase(), {
-            ...repo,
-            isPinned: false,
-            index
+    if (searchInput && !searchInput.dataset.bound) {
+        searchInput.addEventListener("input", event => {
+            state.search = event.target.value.toLowerCase().trim();
+            renderRepositories();
         });
-    });
+        searchInput.dataset.bound = "true";
+    }
 
-    pinned.forEach((repo, index) => {
-        const key = repo.name.toLowerCase();
-        const existing = merged.get(key);
-
-        merged.set(key, {
-            ...existing,
-            ...repo,
-            topics: existing?.topics?.length
-                ? existing.topics
-                : repo.topics,
-            description: existing?.description || repo.description,
-            language: existing?.language !== "Unknown"
-                ? existing.language
-                : repo.language,
-            stars: existing?.stars ?? repo.stars,
-            forks: existing?.forks ?? repo.forks,
-            updatedAt: existing?.updatedAt || repo.updatedAt,
-            isPinned: true,
-            index
+    if (categoryFilter && !categoryFilter.dataset.bound) {
+        categoryFilter.addEventListener("change", event => {
+            state.category = event.target.value;
+            renderRepositories();
         });
-    });
-
-    return [...merged.values()];
-}
-
-function getTopicCounts() {
-    const counts = new Map();
-
-    for (const repo of state.repositories) {
-        for (const topic of repo.topics) {
-            counts.set(topic, (counts.get(topic) || 0) + 1);
-        }
+        categoryFilter.dataset.bound = "true";
     }
 
-    return counts;
-}
-
-function populateCategoryFilter() {
-    const select = $("categoryFilter");
-    const selected = state.category;
-
-    const categories = unique(
-        state.repositories.map(repo => repo.category)
-    ).sort((a, b) => a.localeCompare(b));
-
-    select.replaceChildren();
-
-    const allOption = document.createElement("option");
-    allOption.value = "all";
-    allOption.textContent = "All projects";
-    select.appendChild(allOption);
-
-    for (const category of categories) {
-        const option = document.createElement("option");
-        option.value = category;
-        option.textContent = category;
-        select.appendChild(option);
-    }
-
-    select.value = categories.includes(selected) ? selected : "all";
-
-    if (select.value !== selected) {
-        state.category = select.value;
-    }
-}
-
-function populateTopicFilters() {
-    const container = $("topicFilters");
-    container.replaceChildren();
-
-    const label = document.createElement("span");
-    label.className = "topic-filter-label";
-    label.textContent = "TOPICS";
-    container.appendChild(label);
-
-    const counts = getTopicCounts();
-
-    const topics = [...counts.entries()]
-        .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
-        .slice(0, 12)
-        .map(([topic]) => topic);
-
-    const visibleTopic = topics.includes(state.topic)
-        ? state.topic
-        : "all";
-
-    state.topic = visibleTopic;
-
-    const buttons = [
-        { name: "All topics", value: "all" },
-        ...topics.map(topic => ({
-            name: topic,
-            value: topic
-        }))
-    ];
-
-    for (const item of buttons) {
-        const button = document.createElement("button");
-
-        button.type = "button";
-        button.className = "topic-filter";
-        button.dataset.topic = item.value;
-        button.textContent = item.name;
-        button.setAttribute(
-            "aria-pressed",
-            String(item.value === state.topic)
-        );
-
-        if (item.value === state.topic) {
-            button.classList.add("active");
-        }
-
-        button.addEventListener("click", () => {
-            state.topic = item.value;
-            populateTopicFilters();
-            renderProjects();
+    if (topicFilter && !topicFilter.dataset.bound) {
+        topicFilter.addEventListener("change", event => {
+            state.topic = event.target.value;
+            renderRepositories();
         });
+        topicFilter.dataset.bound = "true";
+    }
 
-        container.appendChild(button);
+    if (sortFilter && !sortFilter.dataset.bound) {
+        sortFilter.addEventListener("change", event => {
+            state.sort = event.target.value;
+            renderRepositories();
+        });
+        sortFilter.dataset.bound = "true";
     }
 }
 
-function getVisibleRepositories() {
-    const query = normalize(state.search);
+function getFilteredRepositories() {
+    let repositories = [...state.repositories];
 
-    return state.repositories
-        .filter(repo => {
-            const matchesCategory = state.category === "all" ||
-                repo.category === state.category;
-
-            const matchesTopic = state.topic === "all" ||
-                repo.topics.includes(state.topic);
-
-            const searchable = normalize([
-                repo.name,
-                repo.description,
-                repo.language,
-                repo.category,
-                ...repo.topics
+    if (state.search) {
+        repositories = repositories.filter(repository => {
+            const searchableText = normalizeText([
+                repository.name,
+                repository.description,
+                repository.language,
+                repository.category,
+                ...repository.topics
             ].join(" "));
 
-            const matchesSearch = !query ||
-                searchable.includes(query);
-
-            return matchesCategory && matchesTopic && matchesSearch;
-        })
-        .sort((a, b) => {
-            switch (state.sort) {
-                case "updated":
-                    return (Date.parse(b.updatedAt) || 0) -
-                        (Date.parse(a.updatedAt) || 0);
-
-                case "stars":
-                    return b.stars - a.stars ||
-                        a.name.localeCompare(b.name);
-
-                case "name":
-                    return a.name.localeCompare(b.name);
-
-                case "pinned":
-                default:
-                    if (a.isPinned !== b.isPinned) {
-                        return a.isPinned ? -1 : 1;
-                    }
-
-                    return a.index - b.index;
-            }
+            return searchableText.includes(normalizeText(state.search));
         });
-}
-
-function createStatIcon(type) {
-    if (type === "star") {
-        return '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 .9l2.2 4.45 4.9.71-3.55 3.46.84 4.88L8 12.1l-4.39 2.3.84-4.88L.9 6.06l4.9-.71L8 .9z"/></svg>';
     }
 
-    return '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3.25a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0zm0 2.12a2.25 2.25 0 1 1-1.5 0v.88a2.25 2.25 0 0 0 2.25 2.25h1.5v2.13a2.25 2.25 0 1 0 1.5 0V8.5h1.5A2.25 2.25 0 0 0 12.5 6.25v-.88a2.25 2.25 0 1 1 1.5 0v.88A3.75 3.75 0 0 1 10.25 10h-.75v1.38a2.25 2.25 0 1 1-3 0V10h-.25A3.75 3.75 0 0 1 2.5 6.25v-.88z"/></svg>';
+    if (state.category !== "all") {
+        repositories = repositories.filter(
+            repository => repository.category === state.category
+        );
+    }
+
+    if (state.topic !== "all") {
+        repositories = repositories.filter(
+            repository => repository.topics.includes(state.topic)
+        );
+    }
+
+    switch (state.sort) {
+        case "stars":
+            repositories.sort((a, b) => b.stars - a.stars);
+            break;
+        case "forks":
+            repositories.sort((a, b) => b.forks - a.forks);
+            break;
+        case "name":
+            repositories.sort((a, b) => a.name.localeCompare(b.name));
+            break;
+        case "updated":
+            repositories.sort((a, b) =>
+                new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0)
+            );
+            break;
+        case "pinned":
+        default:
+            break;
+    }
+
+    return repositories;
 }
 
-function createProjectCard(repo, index) {
-    const card = document.createElement("a");
+function renderTopics(topics) {
+    if (!topics.length) {
+        return `<span class="topic-tag topic-tag-muted">No GitHub topics</span>`;
+    }
 
-    card.className = "project-card";
-    card.href = repo.url;
-    card.target = "_blank";
-    card.rel = "noopener noreferrer";
-    card.style.animationDelay = `${Math.min(index * 35, 280)}ms`;
-    card.setAttribute(
-        "aria-label",
-        `${repo.name}: open GitHub repository in a new tab`
-    );
+    const visibleTopics = topics.slice(0, 6);
+    const remaining = topics.length - visibleTopics.length;
 
-    const topics = repo.topics.slice(0, 5);
-    const extraTopics = repo.topics.length - topics.length;
+    return `
+        ${visibleTopics.map(topic => `
+            <button
+                class="topic-tag"
+                type="button"
+                data-topic="${escapeHTML(topic)}"
+                title="Filter by ${escapeHTML(topic)}"
+            >#${escapeHTML(topic)}</button>
+        `).join("")}
+        ${remaining > 0
+            ? `<span class="topic-tag topic-tag-muted">+${remaining} more</span>`
+            : ""}
+    `;
+}
 
-    const topicMarkup = topics.length
-        ? topics.map(topic =>
-            `<span class="topic-badge">${escapeHTML(topic)}</span>`
-        ).join("") +
-        (extraTopics > 0
-            ? `<span class="topic-badge">+${extraTopics} more</span>`
-            : "")
-        : '<span class="project-topics-empty">No GitHub topics set</span>';
+function renderRepositoryCard(repository, index) {
+    const categoryColor = CATEGORY_COLORS[repository.category] || "gray";
+    const language = repository.language
+        ? `<span class="project-language">
+               <span class="language-dot" ${repository.languageColor
+                   ? `style="background-color:${escapeHTML(repository.languageColor)}"`
+                   : ""}></span>
+               ${escapeHTML(repository.language)}
+           </span>`
+        : "";
 
-    const category = repo.category || "Other Projects";
-    const language = repo.language || "Unknown";
-    const description = repo.description ||
-        "No description has been provided for this repository yet.";
+    const homepageLink = repository.homepage
+        ? `<a href="${escapeHTML(repository.homepage)}" target="_blank" rel="noopener noreferrer">Live demo ↗</a>`
+        : "";
 
-    card.innerHTML = `
-        <div class="project-card-top">
-            <div class="project-identity">
-                <span class="project-icon" aria-hidden="true">${escapeHTML(repo.categoryIcon || "DEV")}</span>
-                <div>
-                    <div class="project-name">${escapeHTML(repo.name)}</div>
-                    <span class="project-owner">@${GITHUB_USERNAME}</span>
+    return `
+        <article class="project-card" style="--card-index:${index}">
+            <div class="project-card-top">
+                <span class="project-category category-${categoryColor}">
+                    ${escapeHTML(repository.category)}
+                </span>
+                ${repository.isPinned
+                    ? `<span class="project-pinned" title="Pinned on GitHub">★ Pinned</span>`
+                    : ""}
+            </div>
+
+            <h3 class="project-title">
+                <a href="${escapeHTML(repository.url)}"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    ${escapeHTML(repository.name)}
+                    <span aria-hidden="true">↗</span>
+                </a>
+            </h3>
+
+            <p class="project-description">
+                ${escapeHTML(repository.description)}
+            </p>
+
+            <div class="project-topics">
+                ${renderTopics(repository.topics)}
+            </div>
+
+            <div class="project-card-footer">
+                <div class="project-metadata">
+                    ${language}
+                    <span class="project-stat" title="GitHub stars">
+                        <span aria-hidden="true">★</span>
+                        ${formatNumber(repository.stars)}
+                    </span>
+                    <span class="project-stat" title="GitHub forks">
+                        <span aria-hidden="true">⑂</span>
+                        ${formatNumber(repository.forks)}
+                    </span>
+                </div>
+                <div class="project-links">
+                    ${homepageLink}
+                    <a href="${escapeHTML(repository.url)}"
+                       target="_blank"
+                       rel="noopener noreferrer">Source ↗</a>
                 </div>
             </div>
-            <span class="project-external" aria-hidden="true">↗</span>
-        </div>
 
-        <p class="project-description">${escapeHTML(description)}</p>
-
-        <div class="project-categories">
-            <span class="category-badge">${escapeHTML(category)}</span>
-            ${repo.isPinned ? '<span class="category-badge">Featured</span>' : ""}
-            ${repo.archived ? '<span class="topic-badge">Archived</span>' : ""}
-        </div>
-
-        <div class="project-topics-heading">GitHub topics</div>
-        <div class="project-topics">${topicMarkup}</div>
-
-        <div class="project-footer">
-            <span class="project-language">
-                <span class="language-dot" style="--language-color:${escapeHTML(repo.languageColor || getLanguageColor(language))}"></span>
-                ${escapeHTML(language)}
-            </span>
-            <span class="project-stat">
-                ${createStatIcon("star")}
-                ${formatNumber(repo.stars)}
-            </span>
-            <span class="project-stat">
-                ${createStatIcon("fork")}
-                ${formatNumber(repo.forks)}
-            </span>
-            ${repo.updatedAt ? `<span class="project-stat" title="Last updated ${escapeHTML(formatDate(repo.updatedAt))}">${escapeHTML(formatDate(repo.updatedAt))}</span>` : ""}
-        </div>
+            ${repository.archived
+                ? `<div class="project-notice">Archived repository</div>`
+                : ""}
+        </article>
     `;
-
-    return card;
 }
 
-function renderProjects() {
-    const grid = $("projectsGrid");
-    const repos = getVisibleRepositories();
-    const fragment = document.createDocumentFragment();
+function renderRepositories() {
+    if (!elements.projectsGrid) return;
 
-    for (const [index, repo] of repos.entries()) {
-        fragment.appendChild(createProjectCard(repo, index));
-    }
+    const repositories = getFilteredRepositories();
 
-    grid.replaceChildren(fragment);
-
-    setText(
-        "projectCount",
-        `${repos.length} ${repos.length === 1 ? "repository" : "repositories"}${repos.length !== state.repositories.length ? ` of ${state.repositories.length}` : ""}`
-    );
-
-    $("emptyState").hidden = repos.length !== 0;
-
-    const hasProjects = state.repositories.length > 0;
-
-    grid.hidden = !hasProjects || repos.length === 0;
-}
-
-function clearFilters() {
-    state.search = "";
-    state.category = "all";
-    state.topic = "all";
-    state.sort = "pinned";
-
-    $("projectSearch").value = "";
-    $("categoryFilter").value = "all";
-    $("sortFilter").value = "pinned";
-
-    populateTopicFilters();
-    renderProjects();
-}
-
-function initFilters() {
-    $("projectSearch").addEventListener("input", event => {
-        state.search = event.target.value;
-        renderProjects();
-    });
-
-    $("categoryFilter").addEventListener("change", event => {
-        state.category = event.target.value;
-        renderProjects();
-    });
-
-    $("sortFilter").addEventListener("change", event => {
-        state.sort = event.target.value;
-        renderProjects();
-    });
-
-    $("resetFilters").addEventListener("click", clearFilters);
-
-    $("retryProjects").addEventListener("click", () => {
-        cache.clear();
-        loadProjects(true);
-    });
-
-    document.addEventListener("keydown", event => {
-        const target = event.target;
-
-        if (
-            event.key === "/" &&
-            !event.ctrlKey &&
-            !event.metaKey &&
-            !event.altKey &&
-            !["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName) &&
-            !target.isContentEditable
-        ) {
-            event.preventDefault();
-            $("projectSearch").focus();
-        }
-
-        if (event.key === "Escape" && target === $("projectSearch")) {
-            $("projectSearch").value = "";
-            state.search = "";
-            renderProjects();
-            target.blur();
-        }
-    });
-}
-
-function initNavigation() {
-    const nav = $("nav");
-    const toggle = $("navToggle");
-    const menu = $("navMenu");
-
-    function closeMenu() {
-        toggle.classList.remove("active");
-        menu.classList.remove("active");
-        toggle.setAttribute("aria-expanded", "false");
-        toggle.setAttribute("aria-label", "Open navigation");
-    }
-
-    toggle.addEventListener("click", () => {
-        const isOpen = !menu.classList.contains("active");
-
-        toggle.classList.toggle("active", isOpen);
-        menu.classList.toggle("active", isOpen);
-        toggle.setAttribute("aria-expanded", String(isOpen));
-        toggle.setAttribute(
-            "aria-label",
-            isOpen ? "Close navigation" : "Open navigation"
-        );
-    });
-
-    menu.querySelectorAll("a").forEach(link => {
-        link.addEventListener("click", closeMenu);
-    });
-
-    document.addEventListener("keydown", event => {
-        if (event.key === "Escape") closeMenu();
-    });
-
-    document.addEventListener("click", event => {
-        if (!nav.contains(event.target)) closeMenu();
-    });
-
-    const updateNav = () => {
-        nav.classList.toggle("scrolled", window.scrollY > 20);
-    };
-
-    updateNav();
-    window.addEventListener("scroll", updateNav, { passive: true });
-}
-
-async function loadProjects(forceRefresh = false) {
-    if (state.loading) return;
-
-    state.loading = true;
-
-    hide("projectsError");
-    hide("emptyState");
-    $("projectsGrid").hidden = false;
-
-    if (!state.loaded) {
-        $("projectsGrid").innerHTML = `
-            <div class="skeleton-card" aria-hidden="true"></div>
-            <div class="skeleton-card" aria-hidden="true"></div>
-            <div class="skeleton-card" aria-hidden="true"></div>
+    if (repositories.length === 0) {
+        elements.projectsGrid.innerHTML = `
+            <div class="projects-empty">
+                <h3>No matching projects</h3>
+                <p>Try another search term, category, or GitHub topic.</p>
+                <button type="button" id="resetProjectFilters">Clear filters</button>
+            </div>
         `;
-    }
 
-    setText("projectCount", "Loading repositories…");
+        document.getElementById("resetProjectFilters")?.addEventListener("click", () => {
+            state.search = "";
+            state.category = "all";
+            state.topic = "all";
+            state.sort = "pinned";
 
-    try {
-        if (forceRefresh) {
-            cache.delete(PINNED_URL);
-            cache.delete(REPOSITORIES_URL);
-            cache.delete(PROFILE_URL);
-        }
+            const search = document.getElementById("projectSearch");
+            const category = document.getElementById("categoryFilter");
+            const topic = document.getElementById("topicFilter");
+            const sort = document.getElementById("projectSort");
 
-        const [pinned, all] = await Promise.all([
-            loadPinnedRepositories(),
-            loadAllRepositories()
-        ]);
+            if (search) search.value = "";
+            if (category) category.value = "all";
+            if (topic) topic.value = "all";
+            if (sort) sort.value = "pinned";
 
-        const pinnedNames = new Set(
-            pinned.map(repo => repo.name.toLowerCase())
-        );
-
-        state.pinnedNames = pinnedNames;
-        state.repositories = mergeRepositories(pinned, all);
-
-        if (state.repositories.length === 0) {
-            throw new Error("No public repositories were returned by GitHub.");
-        }
-
-        await mapWithConcurrency(
-            state.repositories,
-            4,
-            fetchRepositoryTopics
-        );
-
-        state.repositories.sort((a, b) => {
-            if (a.isPinned !== b.isPinned) return a.isPinned ? -1 : 1;
-            return a.index - b.index;
+            renderRepositories();
         });
 
-        populateCategoryFilter();
-        populateTopicFilters();
-        renderProjects();
+        return;
+    }
 
-        state.loaded = true;
-        hide("projectsError");
-    } catch (error) {
-        console.error("Unable to load project catalog:", error);
+    elements.projectsGrid.innerHTML = repositories
+        .map(renderRepositoryCard)
+        .join("");
 
-        if (!state.loaded) {
-            $("projectsGrid").hidden = true;
-            show("projectsError");
-            setText("projectCount", "Repositories unavailable");
-        } else {
-            setText(
-                "projectCount",
-                "Showing previously loaded repositories"
-            );
-        }
-    } finally {
-        state.loading = false;
+    elements.projectsGrid.querySelectorAll("[data-topic]").forEach(button => {
+        button.addEventListener("click", () => {
+            const topic = button.dataset.topic;
+            state.topic = topic;
+
+            const topicFilter = document.getElementById("topicFilter");
+            if (topicFilter) topicFilter.value = topic;
+
+            renderRepositories();
+        });
+    });
+}
+
+function showLoading(isLoading) {
+    if (elements.projectsLoading) {
+        elements.projectsLoading.hidden = !isLoading;
+    }
+
+    if (elements.projectsGrid) {
+        elements.projectsGrid.setAttribute("aria-busy", String(isLoading));
     }
 }
 
-function init() {
-    initTheme();
-    initNavigation();
-    initFilters();
+function showError(message) {
+    if (elements.projectsError) {
+        elements.projectsError.hidden = false;
+        elements.projectsError.textContent = message;
+    } else if (elements.projectsGrid) {
+        elements.projectsGrid.innerHTML = `
+            <div class="projects-error">
+                <h3>Projects could not be loaded</h3>
+                <p>${escapeHTML(message)}</p>
+                <button type="button" id="retryProjects">Try again</button>
+            </div>
+        `;
 
-    loadProfile();
-    loadProjects();
+        document.getElementById("retryProjects")?.addEventListener("click", loadProjects);
+    }
+}
+
+async function loadProjects() {
+    showLoading(true);
+
+    if (elements.projectsError) {
+        elements.projectsError.hidden = true;
+        elements.projectsError.textContent = "";
+    }
+
+    try {
+        state.repositories = await loadPinnedRepositories();
+
+        ensureFilterControls();
+        updateTotalStars();
+        renderRepositories();
+    } catch (error) {
+        console.error("Unable to load pinned repositories:", error);
+        showError(
+            "Unable to load projects from BerrySauce or GitHub. Check your connection and try again."
+        );
+    } finally {
+        showLoading(false);
+    }
+}
+
+function setupThemeToggle() {
+    if (!elements.themeToggle) return;
+
+    const savedTheme = localStorage.getItem("portfolio-theme");
+    const initialTheme = savedTheme === "light" ? "light" : "dark";
+
+    document.documentElement.dataset.theme = initialTheme;
+
+    elements.themeToggle.setAttribute(
+        "aria-label",
+        initialTheme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+    );
+
+    elements.themeToggle.addEventListener("click", () => {
+        const currentTheme = document.documentElement.dataset.theme || "dark";
+        const nextTheme = currentTheme === "dark" ? "light" : "dark";
+
+        document.documentElement.dataset.theme = nextTheme;
+        localStorage.setItem("portfolio-theme", nextTheme);
+
+        elements.themeToggle.setAttribute(
+            "aria-label",
+            nextTheme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+        );
+    });
+}
+
+function setupMobileNavigation() {
+    if (!elements.mobileMenuToggle || !elements.navLinks) return;
+
+    elements.mobileMenuToggle.addEventListener("click", () => {
+        const isOpen = elements.navLinks.classList.toggle("active");
+
+        elements.mobileMenuToggle.setAttribute("aria-expanded", String(isOpen));
+        elements.mobileMenuToggle.setAttribute(
+            "aria-label",
+            isOpen ? "Close navigation menu" : "Open navigation menu"
+        );
+    });
+
+    elements.navLinks.querySelectorAll("a").forEach(link => {
+        link.addEventListener("click", () => {
+            elements.navLinks.classList.remove("active");
+            elements.mobileMenuToggle.setAttribute("aria-expanded", "false");
+        });
+    });
+}
+
+function setupSmoothScrolling() {
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+        link.addEventListener("click", event => {
+            const targetID = link.getAttribute("href");
+            if (!targetID || targetID === "#") return;
+
+            const target = document.querySelector(targetID);
+            if (!target) return;
+
+            event.preventDefault();
+            target.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        });
+    });
+}
+
+async function initPortfolio() {
+    setupThemeToggle();
+    setupMobileNavigation();
+    setupSmoothScrolling();
+
+    await Promise.all([
+        loadProfile(),
+        loadProjects()
+    ]);
 }
 
 if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
+    document.addEventListener("DOMContentLoaded", initPortfolio, { once: true });
 } else {
-    init();
+    initPortfolio();
 }
