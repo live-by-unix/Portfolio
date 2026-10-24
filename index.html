@@ -1,122 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Live-by-Unix — Portfolio</title>
-  <link rel="icon" href="icon.png" sizes="32x32" type="image/png">
-<link rel="icon" href="icon.png" sizes="16x16" type="image/png">
-<link rel="apple-touch-icon" href="icon.png">
-  <style>
-    body {
-      background: #0d0d0d;
-      color: #e5e5e5;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      padding: 40px;
-      max-width: 800px;
-      margin: 0 auto;
-      line-height: 1.6;
-    }
-    h1, h2 {
-      color: #00ff88;
-      font-family: monospace;
-    }
-    a {
-      color: #00ccff;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .tagline {
-      color: #aaaaaa;
-      font-style: italic;
-      margin-bottom: 24px;
-    }
-    .section {
-      margin-top: 32px;
-    }
-    .label {
-      font-weight: bold;
-      color: #00ff88;
-      font-family: monospace;
-    }
-    ul {
-      padding-left: 20px;
-    }
-    code {
-      background: #111;
-      padding: 2px 4px;
-      border-radius: 3px;
-      font-family: monospace;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>live-by-unix — Developer</title>
+    <meta name="description" content="Personal portfolio of live-by-unix, a developer building open source projects.">
+    <link rel="canonical" href="https://live-by-unix.github.io/">
+    <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/262261208?v=4">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="live-by-unix — Developer">
+    <meta property="og:description" content="Personal portfolio of live-by-unix, a developer building open source projects.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://live-by-unix.github.io/">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="live-by-unix — Developer">
+    <meta name="twitter:description" content="Personal portfolio of live-by-unix, a developer building open source projects.">
+    
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <!-- Navigation -->
+    <nav class="nav" id="nav">
+        <div class="nav-container">
+            <a href="#" class="nav-brand">live-by-unix</a>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
+                    <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="5"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                    <svg class="theme-icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                    </svg>
+                </button></li>
+                <li><a href="https://github.com/live-by-unix" class="nav-link" target="_blank" rel="noopener noreferrer">GitHub ↗</a></li>
+            </ul>
+        </div>
+    </nav>
 
-  
-  <h1>Live-By-Unix!</h1>
-  <p class="tagline">I build tools and websites, and sometimes games and chrome extensions in Python, "the web dev trio", Java, Rust, Shell and more.</p>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-avatar">
+                <img id="avatar" src="" alt="live-by-unix GitHub avatar" loading="lazy">
+            </div>
+            <h1 class="hero-title">live-by-unix</h1>
+            <p class="hero-bio" id="heroBio"></p>
+            <div class="hero-actions">
+                <a href="#projects" class="btn btn-primary">View my work</a>
+                <a href="https://github.com/live-by-unix" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+            </div>
+        </div>
+        <div class="hero-bg"></div>
+    </section>
 
+    <!-- About Section -->
+    <section class="section section-about" id="about">
+        <div class="container">
+            <h2 class="section-title">About</h2>
+            <div class="about-content">
+                <p>This is the personal portfolio of <a href="https://github.com/live-by-unix" target="_blank" rel="noopener noreferrer">@live-by-unix</a>, a developer building open source projects. Explore the pinned repositories below to see what I'm working on.</p>
+            </div>
+        </div>
+    </section>
 
-  <div class="section">
-    <h2>About</h2>
-    <p>
-    I am a dev who LOVES building tools and websites, games and chrome extensions quickly. 
-    </p>
-  </div>
+    <!-- Projects Section -->
+    <section class="section section-projects" id="projects">
+        <div class="container">
+            <h2 class="section-title">Things I'm building</h2>
+            <div class="projects-grid" id="projectsGrid">
+                <!-- Loading state -->
+                <div class="projects-loading" id="projectsLoading">
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                </div>
+                <!-- Error state (hidden by default) -->
+                <div class="projects-error" id="projectsError" style="display: none;">
+                    <p>Projects couldn't be loaded right now.</p>
+                    <a href="https://github.com/live-by-unix?tab=repositories" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">View on GitHub ↗</a>
+                </div>
+            </div>
+        </div>
+    </section>
 
+    <!-- GitHub Stats Section -->
+    <section class="section section-stats">
+        <div class="container">
+            <div class="stats-card" id="statsCard">
+                <div class="stats-loading" id="statsLoading"></div>
+                <div class="stats-error" id="statsError" style="display: none;">
+                    <p>GitHub profile information couldn't be loaded.</p>
+                    <a href="https://github.com/live-by-unix" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">View GitHub ↗</a>
+                </div>
+                <div class="stats-content" id="statsContent" style="display: none;">
+                    <div class="stat-item">
+                        <span class="stat-label">Repositories</span>
+                        <span class="stat-value" id="statRepos">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Followers</span>
+                        <span class="stat-value" id="statFollowers">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Following</span>
+                        <span class="stat-value" id="statFollowing">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  <div class="section">
-    <h2>Tech Stack</h2>
-    <p><span class="label">Main languages:</span>Java, Python, Rust, Shell, HTML/CSS/JS, and more </p>
-    <p><span class="label">What I enjoy:</span>Building tools</p>
-  </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>© 2026 live-by-unix</p>
+            <a href="https://github.com/live-by-unix" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        </div>
+    </footer>
 
- 
-  <div class="section">
-    <h2>Projects</h2>
-    <ul>
-      <li>
-        <span class="label">ALL-MY-WEBSITES</span> ALL-MY-Websites contains all the websites I wanted to highlight (a lot of websites)<br>
-        <span class="label">Tech:</span>Pure web dev trio<br>
-        <span class="label">Link:</span> <a href="https://github.com/live-by-unix/ALL-MY-WEBSITES">GitHub</a>
-      </li>
-      <li>
-        <span class="label">VIP</span> — Simple CLI based text editor in python.<br>
-        <span class="label">Tech:</span>Python<br>
-        <span class="label">Link:</span> <a href="https://github.com/live-by-unix/VIP">GitHub</a>
-      </li>
-      <li>
-        <span class="label">AccurateClock</span> — Super accurate clock which is amazing and fast and ad free.<br>
-        <span class="label">Tech:</span>Pure web dev trio.<br>
-        <span class="label">Link:</span> <a href="https://github.com/live-by-unix/accurateclock">GitHub</a>
-      </li>
-    </ul>
-  </div>
-
-  
-  <div class="section">
-    <h2>Tools I highlight</h2>
-    <ul>
-      <li>
-        <span class="label">flip</span> — Text flipper with http: server, written in rust.<br>
-        <code>flip hello world</code>
-      </li>
-      <li>
-        <span class="label">solver</span> — The intelligent blend of rm and nano (Or your favorite text editor), written in rust.<br>
-        <code>solver rm.txt</code>
-      </li>
-      <li>
-        <span class="label">WROKA</span> — YAML deployment engine with fast and ready plugins, easy for devs and the user, WRITTEN IN RUST.<br>
-        <code>wroka deploy apt.yml</code>
-      </li>
-    </ul>
-  </div>
-
-  <div class="section">
-    <h2>Contact</h2>
-    <p><span class="label">GitHub:</span> <a href="https://github.com/live-by-unix">live-by-unix</a></p>
-  </div>
-
+    <script src="script.js"></script>
 </body>
 </html>
