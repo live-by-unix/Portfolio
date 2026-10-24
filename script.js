@@ -1,757 +1,1205 @@
 
-"use strict";
+:root {
+    color-scheme: dark;
+    --bg-primary: #080b12;
+    --bg-secondary: #0d1220;
+    --bg-card: #111827;
+    --bg-card-hover: #151f31;
+    --bg-input: #0b1220;
+    --text-primary: #f1f5f9;
+    --text-secondary: #a1afc3;
+    --text-muted: #718096;
+    --accent: #58a6ff;
+    --accent-hover: #79c0ff;
+    --accent-soft: rgba(88, 166, 255, 0.12);
+    --border: #243044;
+    --border-hover: #3b82c4;
+    --success: #3ddc97;
+    --purple: #b69cff;
+    --cyan: #67e8f9;
+    --orange: #ffbd75;
+    --pink: #f0abfc;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-xl: 24px;
+    --shadow-card: 0 12px 35px rgba(0, 0, 0, 0.18);
+    --transition: 180ms ease;
+    --content-width: 1160px;
+}
 
-const GITHUB_USERNAME = "live-by-unix";
-const GITHUB_API = `https://api.github.com/users/${GITHUB_USERNAME}`;
-const BERRIES_API = `https://pinned.berrysauce.dev/get/${GITHUB_USERNAME}`;
+:root[data-theme="light"] {
+    color-scheme: light;
+    --bg-primary: #f5f8fc;
+    --bg-secondary: #edf2f8;
+    --bg-card: #ffffff;
+    --bg-card-hover: #f8fbff;
+    --bg-input: #ffffff;
+    --text-primary: #152238;
+    --text-secondary: #53647a;
+    --text-muted: #7c8ba0;
+    --accent: #1769c2;
+    --accent-hover: #0d55a3;
+    --accent-soft: rgba(23, 105, 194, 0.09);
+    --border: #d9e2ee;
+    --border-hover: #8ab9ec;
+    --success: #16865c;
+    --purple: #7650cc;
+    --cyan: #087e96;
+    --orange: #a65d0b;
+    --pink: #a63eb1;
+    --shadow-card: 0 12px 35px rgba(34, 58, 89, 0.07);
+}
 
-const elements = {
-    projectsGrid: document.getElementById("projectsGrid"),
-    projectsLoading: document.getElementById("projectsLoading"),
-    projectsError: document.getElementById("projectsError"),
-    avatar: document.getElementById("avatar"),
-    heroBio: document.getElementById("heroBio"),
-    followers: document.getElementById("followers"),
-    publicRepos: document.getElementById("publicRepos"),
-    totalStars: document.getElementById("totalStars"),
-    themeToggle: document.getElementById("themeToggle"),
-    mobileMenuToggle: document.getElementById("mobileMenuToggle"),
-    navLinks: document.getElementById("navLinks")
-};
+* {
+    box-sizing: border-box;
+}
 
-const state = {
-    repositories: [],
-    search: "",
-    category: "all",
-    topic: "all",
-    sort: "pinned"
-};
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 90px;
+}
 
-const CATEGORY_RULES = [
-    {
-        name: "AI & Machine Learning",
-        keywords: [
-            "ai", "artificial-intelligence", "machine-learning", "llm",
-            "llms", "rag", "chatbot", "gpt", "deep-learning", "neural-network"
-        ]
-    },
-    {
-        name: "Developer Tools",
-        keywords: [
-            "developer-tools", "devtools", "cli", "terminal", "compiler",
-            "formatter", "linter", "editor", "ide", "benchmark", "debugging"
-        ]
-    },
-    {
-        name: "Web & APIs",
-        keywords: [
-            "web", "website", "webapp", "web-app", "frontend", "backend",
-            "api", "rest-api", "cloudflare", "workers", "pages", "html",
-            "css", "javascript", "typescript"
-        ]
-    },
-    {
-        name: "Games",
-        keywords: [
-            "game", "games", "gaming", "godot", "gamedev", "game-development",
-            "platformer", "multiplayer"
-        ]
-    },
-    {
-        name: "Desktop Applications",
-        keywords: [
-            "desktop", "desktop-app", "electron", "tauri", "avalonia",
-            "dotnet", "csharp", "c-sharp", "windows", "macos", "linux-app"
-        ]
-    },
-    {
-        name: "Libraries & Frameworks",
-        keywords: [
-            "library", "libraries", "framework", "frameworks", "sdk",
-            "package", "npm", "rust-crate", "middleware"
-        ]
-    },
-    {
-        name: "Open Source & Utilities",
-        keywords: [
-            "utility", "utilities", "tool", "tools", "automation",
-            "open-source", "opensource", "self-hosted", "productivity"
-        ]
+body {
+    margin: 0;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    transition: background var(--transition), color var(--transition);
+}
+
+body,
+button,
+input,
+select,
+textarea {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+button,
+input,
+select {
+    font: inherit;
+}
+
+button,
+a,
+input,
+select {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: color var(--transition);
+}
+
+a:hover {
+    color: var(--accent-hover);
+}
+
+button {
+    color: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+::selection {
+    color: #fff;
+    background: #246dc4;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* Page layout */
+
+.container,
+.container-wide,
+main,
+section {
+    min-width: 0;
+}
+
+.container,
+.container-wide {
+    width: min(var(--content-width), calc(100% - 48px));
+    margin-inline: auto;
+}
+
+section {
+    padding-block: 88px;
+}
+
+section:nth-of-type(even) {
+    background: var(--bg-secondary);
+}
+
+.section-header {
+    max-width: 740px;
+    margin: 0 auto 42px;
+    text-align: center;
+}
+
+.section-header h2,
+section h2 {
+    margin-top: 0;
+    color: var(--text-primary);
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    font-weight: 750;
+    letter-spacing: -0.045em;
+    line-height: 1.2;
+}
+
+.section-header p,
+.section-description {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+/* Header and navigation */
+
+header,
+.site-header,
+.navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in srgb, var(--bg-primary) 88%, transparent);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+nav,
+.navbar-inner,
+.nav-container {
+    width: min(var(--content-width), calc(100% - 48px));
+    min-height: 72px;
+    margin-inline: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.logo,
+.nav-logo,
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary);
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.logo:hover,
+.nav-logo:hover,
+.brand:hover {
+    color: var(--accent);
+}
+
+.nav-links,
+#navLinks {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 25px;
+}
+
+.nav-links a,
+#navLinks a {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    font-weight: 550;
+    transition: color var(--transition);
+}
+
+.nav-links a:hover,
+#navLinks a:hover {
+    color: var(--text-primary);
+}
+
+#themeToggle,
+#mobileMenuToggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: border-color var(--transition), background var(--transition);
+}
+
+#themeToggle:hover,
+#mobileMenuToggle:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+}
+
+#mobileMenuToggle {
+    display: none;
+}
+
+/* Hero */
+
+.hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    padding-block: 105px 95px;
+    background:
+        radial-gradient(ellipse at 18% 12%, rgba(37, 99, 235, 0.14), transparent 40%),
+        radial-gradient(ellipse at 85% 55%, rgba(8, 145, 178, 0.09), transparent 38%),
+        var(--bg-primary);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    width: min(var(--content-width), calc(100% - 48px));
+    margin-inline: auto;
+}
+
+.hero h1 {
+    max-width: 850px;
+    margin: 0 0 22px;
+    font-size: clamp(2.7rem, 7vw, 5.3rem);
+    font-weight: 850;
+    line-height: 1.04;
+    letter-spacing: -0.065em;
+}
+
+.hero h1 span,
+.gradient-text {
+    color: var(--accent);
+    background: linear-gradient(110deg, #60a5fa, #22d3ee);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+    max-width: 690px;
+    color: var(--text-secondary);
+    font-size: clamp(1rem, 2vw, 1.15rem);
+}
+
+#avatar,
+.avatar,
+.profile-avatar {
+    width: 104px;
+    height: 104px;
+    margin-bottom: 28px;
+    border: 3px solid var(--border);
+    border-radius: 50%;
+    object-fit: cover;
+    background: var(--bg-card);
+    box-shadow: 0 0 0 8px var(--accent-soft);
+}
+
+.hero-buttons,
+.hero-actions,
+.button-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+.btn,
+.button,
+.button-primary,
+.button-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 44px;
+    padding: 10px 18px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-size: 0.92rem;
+    font-weight: 650;
+    cursor: pointer;
+    transition: transform var(--transition), border-color var(--transition),
+        background var(--transition);
+}
+
+.btn:hover,
+.button:hover,
+.button-secondary:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    color: var(--text-primary);
+}
+
+.button-primary,
+.btn-primary {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #fff;
+}
+
+.button-primary:hover,
+.btn-primary:hover {
+    background: var(--accent-hover);
+    color: #fff;
+}
+
+/* Profile statistics */
+
+.stats,
+.stats-grid,
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 38px;
+}
+
+.stat-card,
+.stat,
+.profile-stat {
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+}
+
+.stat-value,
+.stat-card strong,
+.stat-number {
+    display: block;
+    color: var(--text-primary);
+    font-size: 1.65rem;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.stat-label,
+.stat-card span,
+.stat-caption {
+    color: var(--text-muted);
+    font-size: 0.84rem;
+}
+
+/* Project section */
+
+#projects {
+    scroll-margin-top: 82px;
+}
+
+#projectsGrid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: stretch;
+    gap: 20px;
+    margin-top: 24px;
+}
+
+#projectsGrid[aria-busy="true"] {
+    opacity: 0.65;
+    pointer-events: none;
+}
+
+#projectsGrid > * {
+    min-width: 0;
+}
+
+/* Search, category, topic and sort filters */
+
+.project-controls {
+    display: grid;
+    gap: 16px;
+    margin: 0 0 26px;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+}
+
+.project-search {
+    width: 100%;
+}
+
+.project-search input,
+#projectSearch {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 16px;
+    border: 1px solid var(--border);
+    border-radius: 11px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+}
+
+.project-search input::placeholder,
+#projectSearch::placeholder {
+    color: var(--text-muted);
+}
+
+.project-search input:focus,
+#projectSearch:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.project-filter-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.project-filter-row label {
+    display: grid;
+    gap: 6px;
+    min-width: 0;
+}
+
+.project-filter-row label > span {
+    color: var(--text-secondary);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.035em;
+}
+
+.project-filter-row select,
+#categoryFilter,
+#topicFilter,
+#projectSort {
+    width: 100%;
+    min-width: 0;
+    min-height: 43px;
+    padding: 9px 34px 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background-color: var(--bg-input);
+    color: var(--text-primary);
+    font-size: 0.88rem;
+    cursor: pointer;
+}
+
+.project-filter-row select:hover {
+    border-color: var(--border-hover);
+}
+
+.project-filter-row select option {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+/* Project cards */
+
+.project-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 290px;
+    padding: 22px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-card);
+    animation: card-appear 350ms ease both;
+    animation-delay: calc(min(var(--card-index, 0), 8) * 35ms);
+    transition: transform var(--transition), border-color var(--transition),
+        background var(--transition), box-shadow var(--transition);
+}
+
+.project-card::before {
+    position: absolute;
+    top: 0;
+    left: 22px;
+    right: 22px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    content: "";
+    opacity: 0;
+    transition: opacity var(--transition);
+}
+
+.project-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-hover);
+    background: var(--bg-card-hover);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.2);
+}
+
+.project-card:hover::before {
+    opacity: 0.9;
+}
+
+.project-card-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 18px;
+}
+
+.project-category,
+.project-pinned {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    width: fit-content;
+    max-width: 100%;
+    padding: 5px 9px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    line-height: 1.35;
+}
+
+.project-pinned {
+    border-color: rgba(245, 190, 70, 0.25);
+    background: rgba(245, 190, 70, 0.08);
+    color: #e8bf68;
+}
+
+.category-purple {
+    border-color: rgba(182, 156, 255, 0.25);
+    background: rgba(182, 156, 255, 0.09);
+    color: var(--purple);
+}
+
+.category-blue {
+    border-color: rgba(88, 166, 255, 0.25);
+    background: rgba(88, 166, 255, 0.09);
+    color: var(--accent);
+}
+
+.category-cyan {
+    border-color: rgba(103, 232, 249, 0.25);
+    background: rgba(103, 232, 249, 0.08);
+    color: var(--cyan);
+}
+
+.category-green {
+    border-color: rgba(61, 220, 151, 0.25);
+    background: rgba(61, 220, 151, 0.08);
+    color: var(--success);
+}
+
+.category-orange {
+    border-color: rgba(255, 189, 117, 0.25);
+    background: rgba(255, 189, 117, 0.08);
+    color: var(--orange);
+}
+
+.category-pink {
+    border-color: rgba(240, 171, 252, 0.25);
+    background: rgba(240, 171, 252, 0.08);
+    color: var(--pink);
+}
+
+.category-gray {
+    color: var(--text-secondary);
+}
+
+.project-title {
+    margin: 0 0 10px;
+    overflow-wrap: anywhere;
+    font-size: 1.12rem;
+    font-weight: 750;
+    line-height: 1.4;
+    letter-spacing: -0.025em;
+}
+
+.project-title a {
+    display: inline;
+    color: var(--text-primary);
+}
+
+.project-title a:hover {
+    color: var(--accent);
+}
+
+.project-title a span {
+    display: inline-block;
+    margin-left: 3px;
+    color: var(--text-muted);
+    font-size: 0.8em;
+    transition: transform var(--transition), color var(--transition);
+}
+
+.project-title a:hover span {
+    transform: translate(2px, -2px);
+    color: var(--accent);
+}
+
+.project-description {
+    display: -webkit-box;
+    min-height: 3.2em;
+    margin: 0 0 20px;
+    overflow: hidden;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+}
+
+/* Actual GitHub topics */
+
+.project-topics {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: flex-start;
+    align-items: center;
+    gap: 7px;
+    margin: 0 0 22px;
+}
+
+.topic-tag {
+    display: inline-flex;
+    align-items: center;
+    max-width: 100%;
+    padding: 4px 8px;
+    border: 1px solid rgba(88, 166, 255, 0.2);
+    border-radius: 6px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.73rem;
+    font-weight: 600;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+    cursor: pointer;
+    transition: background var(--transition), border-color var(--transition),
+        transform var(--transition);
+}
+
+.topic-tag:hover {
+    transform: translateY(-1px);
+    border-color: var(--accent);
+    background: rgba(88, 166, 255, 0.19);
+}
+
+.topic-tag-muted {
+    border-color: var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-muted);
+    cursor: default;
+}
+
+.topic-tag-muted:hover {
+    transform: none;
+    border-color: var(--border);
+    background: var(--bg-secondary);
+}
+
+/* Card footer and metadata */
+
+.project-card-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.project-metadata {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    font-size: 0.77rem;
+}
+
+.project-language,
+.project-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+}
+
+.language-dot {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    background: var(--accent);
+}
+
+.project-stat {
+    color: var(--text-muted);
+}
+
+.project-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px;
+}
+
+.project-links a {
+    font-size: 0.82rem;
+    font-weight: 650;
+}
+
+.project-notice {
+    margin-top: 12px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+}
+
+/* Empty, loading, and error states */
+
+#projectsLoading {
+    padding: 35px 20px;
+    color: var(--text-secondary);
+    text-align: center;
+}
+
+#projectsLoading:not([hidden])::before {
+    display: block;
+    width: 28px;
+    height: 28px;
+    margin: 0 auto 14px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 700ms linear infinite;
+    content: "";
+}
+
+#projectsError:not([hidden]) {
+    margin: 20px 0;
+    padding: 18px;
+    border: 1px solid rgba(248, 113, 113, 0.3);
+    border-radius: var(--radius-md);
+    background: rgba(248, 113, 113, 0.07);
+    color: #fca5a5;
+}
+
+.projects-empty,
+.projects-error {
+    grid-column: 1 / -1;
+    padding: 42px 24px;
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    text-align: center;
+}
+
+.projects-empty h3,
+.projects-error h3 {
+    margin: 0 0 8px;
+    font-size: 1.15rem;
+}
+
+.projects-empty p,
+.projects-error p {
+    color: var(--text-secondary);
+}
+
+.projects-empty button,
+.projects-error button {
+    min-height: 40px;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.projects-empty button:hover,
+.projects-error button:hover {
+    border-color: var(--accent);
+}
+
+/* About, skills, and general content cards */
+
+.card,
+.about-card,
+.skill-card,
+.content-card {
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    transition: border-color var(--transition), transform var(--transition);
+}
+
+.card:hover,
+.about-card:hover,
+.skill-card:hover,
+.content-card:hover {
+    border-color: var(--border-hover);
+}
+
+.card h3,
+.about-card h3,
+.skill-card h3,
+.content-card h3 {
+    margin-top: 0;
+    color: var(--text-primary);
+}
+
+.card p,
+.about-card p,
+.skill-card p,
+.content-card p {
+    color: var(--text-secondary);
+}
+
+.cards-grid,
+.about-grid,
+.skills-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.tag-list,
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tag,
+.skill-tag {
+    padding: 5px 10px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+/* Contact section */
+
+#contact {
+    text-align: center;
+}
+
+#contact p {
+    max-width: 620px;
+    margin-inline: auto;
+    color: var(--text-secondary);
+}
+
+.social-links,
+.contact-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.social-links a,
+.contact-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.social-links a:hover,
+.contact-links a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+/* Footer */
+
+footer,
+.site-footer {
+    padding: 26px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--bg-primary);
+    color: var(--text-muted);
+    text-align: center;
+    font-size: 0.82rem;
+}
+
+footer p,
+.site-footer p {
+    margin: 0;
+}
+
+/* Animations */
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
     }
-];
-
-const CATEGORY_COLORS = {
-    "AI & Machine Learning": "purple",
-    "Developer Tools": "blue",
-    "Web & APIs": "cyan",
-    "Games": "green",
-    "Desktop Applications": "orange",
-    "Libraries & Frameworks": "pink",
-    "Open Source & Utilities": "gray",
-    "Other": "gray"
-};
-
-function normalizeText(value) {
-    return String(value || "")
-        .toLowerCase()
-        .replace(/[^a-z0-9+#.-]+/g, " ")
-        .trim();
 }
 
-function escapeHTML(value) {
-    return String(value ?? "").replace(/[&<>"']/g, character => ({
-        "&": "&amp;",
-        "<": "&lt;",
-        ">": "&gt;",
-        '"': "&quot;",
-        "'": "&#39;"
-    })[character]);
-}
-
-function formatNumber(value) {
-    return new Intl.NumberFormat("en", {
-        notation: Number(value) >= 10000 ? "compact" : "standard",
-        maximumFractionDigits: 1
-    }).format(Number(value) || 0);
-}
-
-async function fetchJSON(url) {
-    const response = await fetch(url, {
-        headers: {
-            Accept: "application/vnd.github+json"
-        }
-    });
-
-    if (!response.ok) {
-        throw new Error(`Request failed (${response.status}): ${url}`);
+@keyframes card-appear {
+    from {
+        transform: translateY(8px);
+        opacity: 0;
     }
-
-    return response.json();
-}
-
-function getRepositoryName(repository) {
-    return repository.name || repository.repo || "";
-}
-
-function getRepositoryURL(repository) {
-    return repository.html_url ||
-        repository.url ||
-        `https://github.com/${GITHUB_USERNAME}/${getRepositoryName(repository)}`;
-}
-
-function normalizeRepository(repository, index) {
-    const name = getRepositoryName(repository);
-    const url = getRepositoryURL(repository);
-
-    return {
-        id: repository.id || `${name}-${index}`,
-        name,
-        fullName: repository.full_name || `${GITHUB_USERNAME}/${name}`,
-        description: repository.description || "No description provided yet.",
-        url,
-        homepage: repository.homepage || "",
-        language: repository.language || null,
-        languageColor: repository.languageColor || repository.language_color || null,
-        stars: Number(repository.stargazers_count ?? repository.stars ?? 0),
-        forks: Number(repository.forks_count ?? repository.forks ?? 0),
-        topics: Array.isArray(repository.topics) ? repository.topics : [],
-        category: "Other",
-        isPinned: true,
-        updatedAt: repository.updated_at || null,
-        archived: Boolean(repository.archived),
-        fork: Boolean(repository.fork)
-    };
-}
-
-function classifyRepository(repository) {
-    const text = normalizeText([
-        repository.name,
-        repository.description,
-        repository.language,
-        ...(repository.topics || [])
-    ].join(" "));
-
-    let bestCategory = "Other";
-    let bestScore = 0;
-
-    for (const rule of CATEGORY_RULES) {
-        let score = 0;
-
-        for (const keyword of rule.keywords) {
-            if (text.includes(normalizeText(keyword))) {
-                score++;
-            }
-        }
-
-        if (score > bestScore) {
-            bestScore = score;
-            bestCategory = rule.name;
-        }
-    }
-
-    repository.category = bestCategory;
-    return repository;
-}
-
-async function loadPinnedRepositories() {
-    const pinnedData = await fetchJSON(BERRIES_API);
-
-    const pinnedRepositories = Array.isArray(pinnedData)
-        ? pinnedData
-        : Array.isArray(pinnedData?.pinned)
-            ? pinnedData.pinned
-            : [];
-
-    if (pinnedRepositories.length === 0) {
-        throw new Error("BerrySauce did not return any pinned repositories.");
-    }
-
-    const repositories = pinnedRepositories
-        .map((repository, index) => normalizeRepository(repository, index))
-        .filter(repository => repository.name);
-
-    const details = await Promise.all(
-        repositories.map(async repository => {
-            try {
-                const detail = await fetchJSON(
-                    `https://api.github.com/repos/${repository.fullName}`
-                );
-
-                return {
-                    ...repository,
-                    description: detail.description || repository.description,
-                    url: detail.html_url || repository.url,
-                    homepage: detail.homepage || repository.homepage,
-                    language: detail.language || repository.language,
-                    stars: Number(detail.stargazers_count ?? repository.stars),
-                    forks: Number(detail.forks_count ?? repository.forks),
-                    topics: Array.isArray(detail.topics)
-                        ? detail.topics
-                        : repository.topics,
-                    updatedAt: detail.updated_at || repository.updatedAt,
-                    archived: Boolean(detail.archived),
-                    fork: Boolean(detail.fork),
-                    isPinned: true
-                };
-            } catch (error) {
-                console.warn(`Could not load details for ${repository.name}:`, error);
-                return repository;
-            }
-        })
-    );
-
-    return details.map(classifyRepository);
-}
-
-async function loadProfile() {
-    try {
-        const profile = await fetchJSON(GITHUB_API);
-
-        if (elements.avatar && profile.avatar_url) {
-            elements.avatar.src = profile.avatar_url;
-            elements.avatar.alt = `${GITHUB_USERNAME}'s GitHub avatar`;
-        }
-
-        if (elements.heroBio) {
-            elements.heroBio.textContent =
-                profile.bio || "Building software, tools, and creative projects.";
-        }
-
-        if (elements.followers) {
-            elements.followers.textContent = formatNumber(profile.followers);
-        }
-
-        if (elements.publicRepos) {
-            elements.publicRepos.textContent = formatNumber(profile.public_repos);
-        }
-
-        if (elements.totalStars) {
-            elements.totalStars.textContent = "—";
-        }
-
-        return profile;
-    } catch (error) {
-        console.warn("Could not load GitHub profile:", error);
-        return null;
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }
 
-function calculateTotalStars(repositories) {
-    return repositories.reduce((total, repository) => total + repository.stars, 0);
-}
+/* Tablet */
 
-function updateTotalStars() {
-    if (elements.totalStars) {
-        elements.totalStars.textContent = formatNumber(
-            calculateTotalStars(state.repositories)
-        );
+@media (max-width: 1000px) {
+    #projectsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cards-grid,
+    .about-grid,
+    .skills-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    section {
+        padding-block: 72px;
     }
 }
 
-function getAllTopics() {
-    const topics = new Set();
+/* Mobile navigation */
 
-    for (const repository of state.repositories) {
-        for (const topic of repository.topics) {
-            if (topic) topics.add(topic);
-        }
+@media (max-width: 720px) {
+    .container,
+    .container-wide,
+    nav,
+    .navbar-inner,
+    .nav-container,
+    .hero-content {
+        width: min(100% - 32px, var(--content-width));
     }
 
-    return [...topics].sort((a, b) => a.localeCompare(b));
-}
-
-function getAllCategories() {
-    return [...new Set(state.repositories.map(repository => repository.category))]
-        .sort((a, b) => a.localeCompare(b));
-}
-
-function ensureFilterControls() {
-    const projectsSection = elements.projectsGrid?.parentElement;
-    if (!projectsSection) return;
-
-    let controls = document.getElementById("projectControls");
-
-    if (!controls) {
-        controls = document.createElement("div");
-        controls.id = "projectControls";
-        controls.className = "project-controls";
-
-        controls.innerHTML = `
-            <div class="project-search">
-                <label class="sr-only" for="projectSearch">Search projects</label>
-                <input
-                    id="projectSearch"
-                    type="search"
-                    placeholder="Search projects, languages, or topics..."
-                    autocomplete="off"
-                >
-            </div>
-            <div class="project-filter-row">
-                <label>
-                    <span>Category</span>
-                    <select id="categoryFilter">
-                        <option value="all">All categories</option>
-                    </select>
-                </label>
-                <label>
-                    <span>GitHub topic</span>
-                    <select id="topicFilter">
-                        <option value="all">All topics</option>
-                    </select>
-                </label>
-                <label>
-                    <span>Sort</span>
-                    <select id="projectSort">
-                        <option value="pinned">Pinned order</option>
-                        <option value="stars">Most stars</option>
-                        <option value="forks">Most forks</option>
-                        <option value="name">Name A–Z</option>
-                        <option value="updated">Recently updated</option>
-                    </select>
-                </label>
-            </div>
-        `;
-
-        elements.projectsGrid.parentElement.insertBefore(
-            controls,
-            elements.projectsGrid
-        );
+    nav,
+    .navbar-inner,
+    .nav-container {
+        min-height: 64px;
     }
 
-    const searchInput = document.getElementById("projectSearch");
-    const categoryFilter = document.getElementById("categoryFilter");
-    const topicFilter = document.getElementById("topicFilter");
-    const sortFilter = document.getElementById("projectSort");
-
-    if (categoryFilter) {
-        const previous = categoryFilter.value;
-
-        categoryFilter.innerHTML = `
-            <option value="all">All categories</option>
-            ${getAllCategories().map(category => `
-                <option value="${escapeHTML(category)}">${escapeHTML(category)}</option>
-            `).join("")}
-        `;
-
-        categoryFilter.value = getAllCategories().includes(previous)
-            ? previous
-            : "all";
+    #mobileMenuToggle {
+        display: inline-flex;
     }
 
-    if (topicFilter) {
-        const previous = topicFilter.value;
-
-        topicFilter.innerHTML = `
-            <option value="all">All topics</option>
-            ${getAllTopics().map(topic => `
-                <option value="${escapeHTML(topic)}">${escapeHTML(topic)}</option>
-            `).join("")}
-        `;
-
-        topicFilter.value = getAllTopics().includes(previous) ? previous : "all";
+    .nav-links,
+    #navLinks {
+        position: absolute;
+        top: calc(100% + 1px);
+        left: 0;
+        right: 0;
+        display: none;
+        align-items: stretch;
+        flex-direction: column;
+        gap: 0;
+        padding: 10px 16px 16px;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg-primary);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
     }
 
-    if (searchInput && !searchInput.dataset.bound) {
-        searchInput.addEventListener("input", event => {
-            state.search = event.target.value.toLowerCase().trim();
-            renderRepositories();
-        });
-        searchInput.dataset.bound = "true";
+    .nav-links.active,
+    #navLinks.active {
+        display: flex;
     }
 
-    if (categoryFilter && !categoryFilter.dataset.bound) {
-        categoryFilter.addEventListener("change", event => {
-            state.category = event.target.value;
-            renderRepositories();
-        });
-        categoryFilter.dataset.bound = "true";
+    .nav-links a,
+    #navLinks a {
+        display: block;
+        padding: 12px;
+        border-radius: 8px;
     }
 
-    if (topicFilter && !topicFilter.dataset.bound) {
-        topicFilter.addEventListener("change", event => {
-            state.topic = event.target.value;
-            renderRepositories();
-        });
-        topicFilter.dataset.bound = "true";
+    .nav-links a:hover,
+    #navLinks a:hover {
+        background: var(--bg-secondary);
     }
 
-    if (sortFilter && !sortFilter.dataset.bound) {
-        sortFilter.addEventListener("change", event => {
-            state.sort = event.target.value;
-            renderRepositories();
-        });
-        sortFilter.dataset.bound = "true";
+    .hero {
+        padding-block: 76px 66px;
+    }
+
+    .hero h1 {
+        font-size: clamp(2.5rem, 11vw, 4rem);
+    }
+
+    section {
+        padding-block: 60px;
+    }
+
+    .section-header {
+        margin-bottom: 30px;
+    }
+
+    .project-controls {
+        padding: 14px;
+    }
+
+    .project-filter-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    #projectsGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .project-card {
+        padding: 17px;
+    }
+
+    .project-card-top {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 7px;
+        margin-bottom: 14px;
+    }
+
+    .project-description {
+        font-size: 0.84rem;
+    }
+
+    .project-metadata {
+        gap: 9px;
     }
 }
 
-function getFilteredRepositories() {
-    let repositories = [...state.repositories];
+/* Small phones */
 
-    if (state.search) {
-        repositories = repositories.filter(repository => {
-            const searchableText = normalizeText([
-                repository.name,
-                repository.description,
-                repository.language,
-                repository.category,
-                ...repository.topics
-            ].join(" "));
-
-            return searchableText.includes(normalizeText(state.search));
-        });
+@media (max-width: 480px) {
+    #projectsGrid,
+    .cards-grid,
+    .about-grid,
+    .skills-grid {
+        grid-template-columns: minmax(0, 1fr);
     }
 
-    if (state.category !== "all") {
-        repositories = repositories.filter(
-            repository => repository.category === state.category
-        );
+    .project-card {
+        min-height: 0;
+        padding: 20px;
     }
 
-    if (state.topic !== "all") {
-        repositories = repositories.filter(
-            repository => repository.topics.includes(state.topic)
-        );
+    .project-card-top {
+        align-items: center;
+        flex-direction: row;
+        flex-wrap: wrap;
     }
 
-    switch (state.sort) {
-        case "stars":
-            repositories.sort((a, b) => b.stars - a.stars);
-            break;
-        case "forks":
-            repositories.sort((a, b) => b.forks - a.forks);
-            break;
-        case "name":
-            repositories.sort((a, b) => a.name.localeCompare(b.name));
-            break;
-        case "updated":
-            repositories.sort((a, b) =>
-                new Date(b.updatedAt || 0) - new Date(a.updatedAt || 0)
-            );
-            break;
-        case "pinned":
-        default:
-            break;
+    .project-description {
+        min-height: 0;
     }
 
-    return repositories;
-}
-
-function renderTopics(topics) {
-    if (!topics.length) {
-        return `<span class="topic-tag topic-tag-muted">No GitHub topics</span>`;
+    .stats,
+    .stats-grid,
+    .profile-stats {
+        gap: 8px;
     }
 
-    const visibleTopics = topics.slice(0, 6);
-    const remaining = topics.length - visibleTopics.length;
-
-    return `
-        ${visibleTopics.map(topic => `
-            <button
-                class="topic-tag"
-                type="button"
-                data-topic="${escapeHTML(topic)}"
-                title="Filter by ${escapeHTML(topic)}"
-            >#${escapeHTML(topic)}</button>
-        `).join("")}
-        ${remaining > 0
-            ? `<span class="topic-tag topic-tag-muted">+${remaining} more</span>`
-            : ""}
-    `;
-}
-
-function renderRepositoryCard(repository, index) {
-    const categoryColor = CATEGORY_COLORS[repository.category] || "gray";
-    const language = repository.language
-        ? `<span class="project-language">
-               <span class="language-dot" ${repository.languageColor
-                   ? `style="background-color:${escapeHTML(repository.languageColor)}"`
-                   : ""}></span>
-               ${escapeHTML(repository.language)}
-           </span>`
-        : "";
-
-    const homepageLink = repository.homepage
-        ? `<a href="${escapeHTML(repository.homepage)}" target="_blank" rel="noopener noreferrer">Live demo ↗</a>`
-        : "";
-
-    return `
-        <article class="project-card" style="--card-index:${index}">
-            <div class="project-card-top">
-                <span class="project-category category-${categoryColor}">
-                    ${escapeHTML(repository.category)}
-                </span>
-                ${repository.isPinned
-                    ? `<span class="project-pinned" title="Pinned on GitHub">★ Pinned</span>`
-                    : ""}
-            </div>
-
-            <h3 class="project-title">
-                <a href="${escapeHTML(repository.url)}"
-                   target="_blank"
-                   rel="noopener noreferrer">
-                    ${escapeHTML(repository.name)}
-                    <span aria-hidden="true">↗</span>
-                </a>
-            </h3>
-
-            <p class="project-description">
-                ${escapeHTML(repository.description)}
-            </p>
-
-            <div class="project-topics">
-                ${renderTopics(repository.topics)}
-            </div>
-
-            <div class="project-card-footer">
-                <div class="project-metadata">
-                    ${language}
-                    <span class="project-stat" title="GitHub stars">
-                        <span aria-hidden="true">★</span>
-                        ${formatNumber(repository.stars)}
-                    </span>
-                    <span class="project-stat" title="GitHub forks">
-                        <span aria-hidden="true">⑂</span>
-                        ${formatNumber(repository.forks)}
-                    </span>
-                </div>
-                <div class="project-links">
-                    ${homepageLink}
-                    <a href="${escapeHTML(repository.url)}"
-                       target="_blank"
-                       rel="noopener noreferrer">Source ↗</a>
-                </div>
-            </div>
-
-            ${repository.archived
-                ? `<div class="project-notice">Archived repository</div>`
-                : ""}
-        </article>
-    `;
-}
-
-function renderRepositories() {
-    if (!elements.projectsGrid) return;
-
-    const repositories = getFilteredRepositories();
-
-    if (repositories.length === 0) {
-        elements.projectsGrid.innerHTML = `
-            <div class="projects-empty">
-                <h3>No matching projects</h3>
-                <p>Try another search term, category, or GitHub topic.</p>
-                <button type="button" id="resetProjectFilters">Clear filters</button>
-            </div>
-        `;
-
-        document.getElementById("resetProjectFilters")?.addEventListener("click", () => {
-            state.search = "";
-            state.category = "all";
-            state.topic = "all";
-            state.sort = "pinned";
-
-            const search = document.getElementById("projectSearch");
-            const category = document.getElementById("categoryFilter");
-            const topic = document.getElementById("topicFilter");
-            const sort = document.getElementById("projectSort");
-
-            if (search) search.value = "";
-            if (category) category.value = "all";
-            if (topic) topic.value = "all";
-            if (sort) sort.value = "pinned";
-
-            renderRepositories();
-        });
-
-        return;
+    .stat-card,
+    .stat,
+    .profile-stat {
+        padding: 13px 10px;
     }
 
-    elements.projectsGrid.innerHTML = repositories
-        .map(renderRepositoryCard)
-        .join("");
-
-    elements.projectsGrid.querySelectorAll("[data-topic]").forEach(button => {
-        button.addEventListener("click", () => {
-            const topic = button.dataset.topic;
-            state.topic = topic;
-
-            const topicFilter = document.getElementById("topicFilter");
-            if (topicFilter) topicFilter.value = topic;
-
-            renderRepositories();
-        });
-    });
-}
-
-function showLoading(isLoading) {
-    if (elements.projectsLoading) {
-        elements.projectsLoading.hidden = !isLoading;
+    .stat-value,
+    .stat-card strong,
+    .stat-number {
+        font-size: 1.3rem;
     }
 
-    if (elements.projectsGrid) {
-        elements.projectsGrid.setAttribute("aria-busy", String(isLoading));
+    .stat-label,
+    .stat-card span,
+    .stat-caption {
+        font-size: 0.72rem;
+    }
+
+    .hero-buttons,
+    .hero-actions,
+    .button-group {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .hero-buttons > *,
+    .hero-actions > *,
+    .button-group > * {
+        width: 100%;
+    }
+
+    .project-filter-row {
+        grid-template-columns: minmax(0, 1fr);
     }
 }
 
-function showError(message) {
-    if (elements.projectsError) {
-        elements.projectsError.hidden = false;
-        elements.projectsError.textContent = message;
-    } else if (elements.projectsGrid) {
-        elements.projectsGrid.innerHTML = `
-            <div class="projects-error">
-                <h3>Projects could not be loaded</h3>
-                <p>${escapeHTML(message)}</p>
-                <button type="button" id="retryProjects">Try again</button>
-            </div>
-        `;
+/* Respect reduced-motion preferences */
 
-        document.getElementById("retryProjects")?.addEventListener("click", loadProjects);
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
     }
-}
-
-async function loadProjects() {
-    showLoading(true);
-
-    if (elements.projectsError) {
-        elements.projectsError.hidden = true;
-        elements.projectsError.textContent = "";
-    }
-
-    try {
-        state.repositories = await loadPinnedRepositories();
-
-        ensureFilterControls();
-        updateTotalStars();
-        renderRepositories();
-    } catch (error) {
-        console.error("Unable to load pinned repositories:", error);
-        showError(
-            "Unable to load projects from BerrySauce or GitHub. Check your connection and try again."
-        );
-    } finally {
-        showLoading(false);
-    }
-}
-
-function setupThemeToggle() {
-    if (!elements.themeToggle) return;
-
-    const savedTheme = localStorage.getItem("portfolio-theme");
-    const initialTheme = savedTheme === "light" ? "light" : "dark";
-
-    document.documentElement.dataset.theme = initialTheme;
-
-    elements.themeToggle.setAttribute(
-        "aria-label",
-        initialTheme === "dark" ? "Switch to light theme" : "Switch to dark theme"
-    );
-
-    elements.themeToggle.addEventListener("click", () => {
-        const currentTheme = document.documentElement.dataset.theme || "dark";
-        const nextTheme = currentTheme === "dark" ? "light" : "dark";
-
-        document.documentElement.dataset.theme = nextTheme;
-        localStorage.setItem("portfolio-theme", nextTheme);
-
-        elements.themeToggle.setAttribute(
-            "aria-label",
-            nextTheme === "dark" ? "Switch to light theme" : "Switch to dark theme"
-        );
-    });
-}
-
-function setupMobileNavigation() {
-    if (!elements.mobileMenuToggle || !elements.navLinks) return;
-
-    elements.mobileMenuToggle.addEventListener("click", () => {
-        const isOpen = elements.navLinks.classList.toggle("active");
-
-        elements.mobileMenuToggle.setAttribute("aria-expanded", String(isOpen));
-        elements.mobileMenuToggle.setAttribute(
-            "aria-label",
-            isOpen ? "Close navigation menu" : "Open navigation menu"
-        );
-    });
-
-    elements.navLinks.querySelectorAll("a").forEach(link => {
-        link.addEventListener("click", () => {
-            elements.navLinks.classList.remove("active");
-            elements.mobileMenuToggle.setAttribute("aria-expanded", "false");
-        });
-    });
-}
-
-function setupSmoothScrolling() {
-    document.querySelectorAll('a[href^="#"]').forEach(link => {
-        link.addEventListener("click", event => {
-            const targetID = link.getAttribute("href");
-            if (!targetID || targetID === "#") return;
-
-            const target = document.querySelector(targetID);
-            if (!target) return;
-
-            event.preventDefault();
-            target.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
-        });
-    });
-}
-
-async function initPortfolio() {
-    setupThemeToggle();
-    setupMobileNavigation();
-    setupSmoothScrolling();
-
-    await Promise.all([
-        loadProfile(),
-        loadProjects()
-    ]);
-}
-
-if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initPortfolio, { once: true });
-} else {
-    initPortfolio();
 }
