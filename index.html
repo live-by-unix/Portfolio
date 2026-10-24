@@ -1,134 +1,286 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>live-by-unix — Developer</title>
-    <meta name="description" content="Personal portfolio of live-by-unix, a developer building open source projects.">
-    <link rel="canonical" href="https://live-by-unix.github.io/">
-    <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/262261208?v=4">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="live-by-unix — Developer">
-    <meta property="og:description" content="Personal portfolio of live-by-unix, a developer building open source projects.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0a0a0b">
+    <meta name="description" content="Explore open-source projects, developer tools, APIs, games, and experiments by live-by-unix.">
+    <meta property="og:title" content="live-by-unix — Developer & Open Source">
+    <meta property="og:description" content="Explore projects, developer tools, APIs, games, and open-source experiments.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://live-by-unix.github.io/">
-    
-    <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="live-by-unix — Developer">
-    <meta name="twitter:description" content="Personal portfolio of live-by-unix, a developer building open source projects.">
-    
+    <meta name="twitter:description" content="Open-source software, developer tools, and experiments.">
+    <link rel="canonical" href="https://live-by-unix.github.io/">
+    <link rel="icon" href="https://github.com/live-by-unix.png" type="image/png">
     <link rel="stylesheet" href="styles.css">
+    <title>live-by-unix — Developer</title>
+    <script>
+        try {
+            const theme = localStorage.getItem("portfolio-theme");
+            if (theme === "light" || theme === "dark") {
+                document.documentElement.dataset.theme = theme;
+            } else if (matchMedia("(prefers-color-scheme: light)").matches) {
+                document.documentElement.dataset.theme = "light";
+            }
+        } catch {}
+    </script>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="nav" id="nav">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <nav class="nav" id="nav" aria-label="Main navigation">
         <div class="nav-container">
-            <a href="#" class="nav-brand">live-by-unix</a>
-            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
-                <span></span>
-                <span></span>
-                <span></span>
+            <a class="nav-brand" href="#" aria-label="live-by-unix home">
+                <span class="brand-mark">lx</span>
+                <span>live-by-unix</span>
+            </a>
+
+            <button class="nav-toggle" id="navToggle"
+                aria-label="Open navigation" aria-expanded="false"
+                aria-controls="navMenu">
+                <span></span><span></span><span></span>
             </button>
+
             <ul class="nav-menu" id="navMenu">
                 <li><a href="#about" class="nav-link">About</a></li>
                 <li><a href="#projects" class="nav-link">Projects</a></li>
-                <li><button class="theme-toggle" id="themeToggle" aria-label="Toggle dark/light mode">
-                    <svg class="theme-icon sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="5"/>
-                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-                    </svg>
-                    <svg class="theme-icon moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-                    </svg>
-                </button></li>
-                <li><a href="https://github.com/live-by-unix" class="nav-link" target="_blank" rel="noopener noreferrer">GitHub ↗</a></li>
+                <li><a href="#stats" class="nav-link">GitHub stats</a></li>
+                <li>
+                    <button class="theme-toggle" id="themeToggle"
+                        aria-label="Switch to light theme" title="Toggle theme">
+                        <svg class="theme-icon sun-icon" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="1.8"
+                            aria-hidden="true">
+                            <circle cx="12" cy="12" r="4"/>
+                            <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/>
+                        </svg>
+                        <svg class="theme-icon moon-icon" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="1.8"
+                            aria-hidden="true">
+                            <path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"/>
+                        </svg>
+                    </button>
+                </li>
+                <li>
+                    <a class="nav-link external-link"
+                        href="https://github.com/live-by-unix"
+                        target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+                </li>
             </ul>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-avatar">
-                <img id="avatar" src="" alt="live-by-unix GitHub avatar" loading="lazy">
-            </div>
-            <h1 class="hero-title">live-by-unix</h1>
-            <p class="hero-bio" id="heroBio"></p>
-            <div class="hero-actions">
-                <a href="#projects" class="btn btn-primary">View my work</a>
-                <a href="https://github.com/live-by-unix" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-            </div>
-        </div>
-        <div class="hero-bg"></div>
-    </section>
+    <main id="main">
+        <section class="hero" aria-labelledby="heroTitle">
+            <div class="hero-glow" aria-hidden="true"></div>
+            <div class="hero-grid" aria-hidden="true"></div>
 
-    <!-- About Section -->
-    <section class="section section-about" id="about">
-        <div class="container">
-            <h2 class="section-title">About</h2>
-            <div class="about-content">
-                <p>This is the personal portfolio of <a href="https://github.com/live-by-unix" target="_blank" rel="noopener noreferrer">@live-by-unix</a>, a developer building open source projects. Explore the pinned repositories below to see what I'm working on.</p>
-            </div>
-        </div>
-    </section>
+            <div class="hero-content">
+                <div class="status-pill">
+                    <span class="status-dot"></span>
+                    <span>Building in the open</span>
+                </div>
 
-    <!-- Projects Section -->
-    <section class="section section-projects" id="projects">
-        <div class="container">
-            <h2 class="section-title">Things I'm building</h2>
-            <div class="projects-grid" id="projectsGrid">
-                <!-- Loading state -->
-                <div class="projects-loading" id="projectsLoading">
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
+                <a class="hero-avatar-link"
+                    href="https://github.com/live-by-unix"
+                    target="_blank" rel="noopener noreferrer"
+                    aria-label="View live-by-unix on GitHub">
+                    <img id="avatar"
+                        src="https://github.com/live-by-unix.png"
+                        alt="live-by-unix GitHub avatar"
+                        width="112" height="112">
+                </a>
+
+                <p class="eyebrow">INDEPENDENT DEVELOPER · OPEN SOURCE</p>
+                <h1 class="hero-title" id="heroTitle">live-by-unix<span>.</span></h1>
+                <p class="hero-bio" id="heroBio">
+                    Building software, developer tools, APIs, and experiments.
+                </p>
+
+                <div class="hero-actions">
+                    <a href="#projects" class="btn btn-primary">
+                        Explore projects <span aria-hidden="true">↓</span>
+                    </a>
+                    <a href="https://github.com/live-by-unix"
+                        class="btn btn-secondary"
+                        target="_blank" rel="noopener noreferrer">
+                        <svg viewBox="0 0 16 16" aria-hidden="true">
+                            <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.7 7.7 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+                        </svg>
+                        GitHub profile ↗
+                    </a>
                 </div>
-                <!-- Error state (hidden by default) -->
-                <div class="projects-error" id="projectsError" style="display: none;">
-                    <p>Projects couldn't be loaded right now.</p>
-                    <a href="https://github.com/live-by-unix?tab=repositories" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">View on GitHub ↗</a>
+
+                <div class="hero-note">
+                    <span class="note-line"></span>
+                    <span>Ideas into code, one project at a time.</span>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <!-- GitHub Stats Section -->
-    <section class="section section-stats">
-        <div class="container">
-            <div class="stats-card" id="statsCard">
-                <div class="stats-loading" id="statsLoading"></div>
-                <div class="stats-error" id="statsError" style="display: none;">
-                    <p>GitHub profile information couldn't be loaded.</p>
-                    <a href="https://github.com/live-by-unix" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">View GitHub ↗</a>
+            <a class="scroll-cue" href="#about" aria-label="Scroll to About">
+                <span></span>
+            </a>
+        </section>
+
+        <section class="section section-about" id="about">
+            <div class="container narrow">
+                <p class="eyebrow section-eyebrow">01 / ABOUT</p>
+                <h2 class="section-title">Curiosity, <span>compiled.</span></h2>
+                <p class="about-description">
+                    I'm <a href="https://github.com/live-by-unix"
+                    target="_blank" rel="noopener noreferrer">@live-by-unix</a>.
+                    This is where my software projects, experiments, and
+                    open-source work come together. Explore the repository
+                    catalog, discover technologies, and dive into the code.
+                </p>
+                <div class="about-tags" aria-label="Areas of interest">
+                    <span>Open source</span>
+                    <span>Developer tools</span>
+                    <span>Web applications</span>
+                    <span>APIs</span>
+                    <span>Game development</span>
                 </div>
-                <div class="stats-content" id="statsContent" style="display: none;">
-                    <div class="stat-item">
-                        <span class="stat-label">Repositories</span>
-                        <span class="stat-value" id="statRepos">0</span>
+            </div>
+        </section>
+
+        <section class="section section-projects" id="projects">
+            <div class="container">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow section-eyebrow">02 / THE WORK</p>
+                        <h2 class="section-title">Project <span>catalog.</span></h2>
+                        <p class="section-description">
+                            Repositories, experiments, and things in progress.
+                            Each card includes its GitHub topics and technology.
+                        </p>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Followers</span>
-                        <span class="stat-value" id="statFollowers">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Following</span>
-                        <span class="stat-value" id="statFollowing">0</span>
-                    </div>
+                    <a class="text-link"
+                        href="https://github.com/live-by-unix?tab=repositories"
+                        target="_blank" rel="noopener noreferrer">
+                        All repositories ↗
+                    </a>
+                </div>
+
+                <div class="project-toolbar">
+                    <label class="search-box" for="projectSearch">
+                        <svg viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="1.8"
+                            aria-hidden="true">
+                            <circle cx="11" cy="11" r="7"/>
+                            <path d="m16 16 4 4"/>
+                        </svg>
+                        <input id="projectSearch" type="search"
+                            placeholder="Search projects, tags, languages..."
+                            autocomplete="off">
+                        <kbd>/</kbd>
+                    </label>
+
+                    <label class="filter-label" for="categoryFilter">
+                        <span>Category</span>
+                        <select id="categoryFilter">
+                            <option value="all">All projects</option>
+                        </select>
+                    </label>
+
+                    <label class="filter-label sort-label" for="sortFilter">
+                        <span>Sort by</span>
+                        <select id="sortFilter">
+                            <option value="pinned">Featured first</option>
+                            <option value="updated">Recently updated</option>
+                            <option value="stars">Most stars</option>
+                            <option value="name">Name A–Z</option>
+                        </select>
+                    </label>
+                </div>
+
+                <div class="topic-filters" id="topicFilters"
+                    aria-label="Popular topics">
+                    <span class="topic-filter-label">TOPICS</span>
+                    <button class="topic-filter active" data-topic="all"
+                        type="button" aria-pressed="true">All topics</button>
+                </div>
+
+                <div class="catalog-status" aria-live="polite">
+                    <span id="projectCount">Loading repositories…</span>
+                    <span class="live-indicator"><span></span> GitHub data</span>
+                </div>
+
+                <div class="projects-grid" id="projectsGrid">
+                    <div class="skeleton-card" aria-hidden="true"></div>
+                    <div class="skeleton-card" aria-hidden="true"></div>
+                    <div class="skeleton-card" aria-hidden="true"></div>
+                </div>
+
+                <div class="empty-state" id="emptyState" hidden>
+                    <span class="empty-icon">⌕</span>
+                    <h3>No matching projects</h3>
+                    <p>Try another search term, category, or topic.</p>
+                    <button class="btn btn-secondary" id="resetFilters"
+                        type="button">Clear filters</button>
+                </div>
+
+                <div class="projects-error" id="projectsError" hidden>
+                    <h3>Couldn't load repositories</h3>
+                    <p>GitHub may be temporarily unavailable or its API rate
+                        limit may have been reached.</p>
+                    <button class="btn btn-secondary" id="retryProjects"
+                        type="button">Try again</button>
+                    <a class="text-link"
+                        href="https://github.com/live-by-unix?tab=repositories"
+                        target="_blank" rel="noopener noreferrer">
+                        Browse GitHub directly ↗
+                    </a>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Footer -->
+        <section class="section section-stats" id="stats">
+            <div class="container">
+                <div class="stats-panel">
+                    <div class="stats-heading">
+                        <div>
+                            <p class="eyebrow section-eyebrow">03 / GITHUB</p>
+                            <h2 class="section-title">The numbers<span>.</span></h2>
+                        </div>
+                        <a href="https://github.com/live-by-unix"
+                            target="_blank" rel="noopener noreferrer"
+                            class="github-mark" aria-label="GitHub profile">↗</a>
+                    </div>
+
+                    <div class="stats-content" id="statsContent">
+                        <div class="stat-item">
+                            <span class="stat-value" id="statRepos">—</span>
+                            <span class="stat-label">Public repositories</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="statFollowers">—</span>
+                            <span class="stat-label">Followers</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-value" id="statFollowing">—</span>
+                            <span class="stat-label">Following</span>
+                        </div>
+                    </div>
+                    <p class="stats-footnote" id="statsFootnote">
+                        Live public profile data from GitHub.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
     <footer class="footer">
-        <div class="container">
-            <p>© 2026 live-by-unix</p>
-            <a href="https://github.com/live-by-unix" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+        <div class="container footer-inner">
+            <a class="nav-brand" href="#">live-by-unix<span>.</span></a>
+            <p>Designed with curiosity. Built in the open.</p>
+            <a href="https://github.com/live-by-unix"
+                target="_blank" rel="noopener noreferrer">GitHub ↗</a>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html>
